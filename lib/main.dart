@@ -1,0 +1,2183 @@
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:web/web.dart' as web;
+import 'dart:ui_web' as ui_web;
+import 'models/sporting_event.dart';
+import 'data/events_data.dart';
+
+void main() {
+  ui_web.platformViewRegistry.registerViewFactory(
+    'campus-map-iframe',
+    (int viewId) {
+      final iframe = web.HTMLIFrameElement()
+        ..src = 'https://maps.google.com/maps?q=Washington+and+Lee+University+Athletics+Lexington+VA&t=k&z=17&ie=UTF8&iwloc=&output=embed'
+        ..allowFullscreen = true;
+      iframe.style
+        ..border = 'none'
+        ..width = '100%'
+        ..height = '100%';
+      return iframe;
+    },
+  );
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Gennies Live',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF000399),
+          primary: const Color(0xFF000399),
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF000399),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+      ),
+      builder: (context, child) {
+        return Container(
+          color: const Color(0xFF1A1A2E),
+          child: Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 430),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.hardEdge,
+              child: child!,
+            ),
+          ),
+        );
+      },
+      home: const MainScaffold(),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// MAIN SCAFFOLD — bottom nav shell
+// ─────────────────────────────────────────────
+class MainScaffold extends StatefulWidget {
+  const MainScaffold({super.key});
+
+  @override
+  State<MainScaffold> createState() => _MainScaffoldState();
+}
+
+class _MainScaffoldState extends State<MainScaffold> {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: const [
+          HomePage(),
+          SchedulePage(),
+          ResultsPage(),
+          WorkoutClassesPage(showBackButton: false),
+          _MoreMenuPage(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (i) => setState(() => _selectedIndex = i),
+        backgroundColor: const Color(0xFF000399),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.0),
+        unselectedLabelStyle: const TextStyle(letterSpacing: 1.0),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'SCHEDULE'),
+          BottomNavigationBarItem(icon: Icon(Icons.leaderboard), label: 'RESULTS'),
+          BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: 'GROUPEX'),
+          BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'MORE'),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// HOME PAGE
+// ─────────────────────────────────────────────
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final nextEvents = EventsData.getUpcomingEvents().take(2).toList();
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: CustomScrollView(
+        slivers: [
+          // ── Hero banner ──
+          SliverAppBar(
+            expandedHeight: 200,
+            pinned: true,
+            backgroundColor: const Color(0xFF000399),
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(bottom: 50),
+              centerTitle: true,
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.network(
+                    'https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/generalssports.com/images/logos/site/site.png',
+                    height: 36,
+                    color: Colors.white,
+                    colorBlendMode: BlendMode.srcIn,
+                    errorBuilder: (context, error, stack) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'GENERALS MOVE',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const Text(
+                    'Washington & Lee University Athletics',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+              background: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xFF0005CC), Color(0xFF000399)],
+                  ),
+                ),
+                child: const SizedBox.expand(),
+              ),
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Section label ──
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      'EXPLORE',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+
+                  // ── Navigation cards ──
+                  _NavCard(
+                    title: 'Workout Classes',
+                    description: 'Weekly fitness class schedule — yoga, TRX, spin, pilates, open swim & more.',
+                    icon: Icons.fitness_center,
+                    color: const Color(0xFF000399),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const WorkoutClassesPage()),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _NavCard(
+                    title: 'Facility Hours',
+                    description: 'Operating hours for Warner Center, Natatorium, Fitness Center & more.',
+                    icon: Icons.schedule,
+                    color: const Color(0xFF1A237E),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const FacilityHoursPage()),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _NavCard(
+                    title: 'Varsity Sports',
+                    description: 'Game schedules, upcoming events & results for all Generals sports.',
+                    icon: Icons.emoji_events,
+                    color: const Color(0xFF283593),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const VarsitySportsPage()),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _NavCard(
+                    title: 'Club Sports',
+                    description: 'Browse and sign up for student-run club sports at Washington & Lee.',
+                    icon: Icons.groups,
+                    color: const Color(0xFF0D47A1),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ClubSportsPage()),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _NavCard(
+                    title: 'Campus Map',
+                    description: 'Interactive map of W&L — find sporting facilities, fields & venues.',
+                    icon: Icons.map,
+                    color: const Color(0xFF1B5E20),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CampusMapPage()),
+                    ),
+                  ),
+
+                  // ── Photo gallery ──
+                  const _PhotoGallerySection(),
+
+                  // ── Next Up section ──
+                  if (nextEvents.isNotEmpty) ...[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 28, bottom: 12),
+                      child: Text(
+                        'NEXT UP',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    ...nextEvents.map((e) => _UpcomingEventTile(event: e)),
+                  ],
+
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Photo gallery section ──
+class _PhotoGallerySection extends StatelessWidget {
+  const _PhotoGallerySection();
+
+  static const List<Map<String, String>> _photos = [
+    {'asset': 'assets/images/baseball.webp',        'label': 'Baseball'},
+    {'asset': 'assets/images/swimming.webp',        'label': 'Swimming'},
+    {'asset': 'assets/images/mens_lacrosse.webp',   'label': "Men's Lacrosse"},
+    {'asset': 'assets/images/womens_lacrosse.png',  'label': "Women's Lacrosse"},
+    {'asset': 'assets/images/wrestling.webp',       'label': 'Wrestling'},
+    {'asset': 'assets/images/volleyball.webp',      'label': 'Volleyball'},
+    {'asset': 'assets/images/field_hockey.webp',    'label': 'Field Hockey'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 28, bottom: 12),
+          child: Text(
+            'GENERALS ATHLETICS',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 160,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: _photos.length,
+            separatorBuilder: (context, index) => const SizedBox(width: 10),
+            itemBuilder: (context, index) {
+              final photo = _photos[index];
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Stack(
+                  children: [
+                    Image.asset(
+                      photo['asset']!,
+                      width: 200,
+                      height: 160,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stack) => Container(
+                        width: 200,
+                        height: 160,
+                        color: const Color(0xFF000399).withValues(alpha: 0.1),
+                        child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Colors.black.withValues(alpha: 0.7),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                        child: Text(
+                          photo['label']!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+// ── Reusable nav card ──
+class _NavCard extends StatelessWidget {
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _NavCard({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: color,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: Colors.white, size: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: Colors.white70, size: 28),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Small upcoming event preview tile ──
+class _UpcomingEventTile extends StatelessWidget {
+  final SportingEvent event;
+  const _UpcomingEventTile({required this.event});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: const Color(0xFF000399),
+          child: Icon(_sportIcon(event.sport), color: Colors.white, size: 18),
+        ),
+        title: Text(
+          '${event.sport} ${event.homeAwayText} ${event.opponent}',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        subtitle: Text('${event.formattedDate} • ${event.formattedTime}'),
+        trailing: Chip(
+          label: Text(
+            event.isHome ? 'Home' : 'Away',
+            style: const TextStyle(fontSize: 11),
+          ),
+          backgroundColor: event.isHome
+              ? const Color(0xFFE8F5E9)
+              : const Color(0xFFFFEBEE),
+          padding: EdgeInsets.zero,
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// SCHEDULE PAGE (tab 2)
+// ─────────────────────────────────────────────
+class SchedulePage extends StatefulWidget {
+  const SchedulePage({super.key});
+
+  @override
+  State<SchedulePage> createState() => _SchedulePageState();
+}
+
+class _SchedulePageState extends State<SchedulePage> {
+  late DateTime _selectedDate;
+  late DateTime _weekStart;
+
+  static const _dayAbbrevs = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  static const _monthNames = [
+    '', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _selectedDate = DateTime(now.year, now.month, now.day);
+    // Start week on Sunday (weekday 7 = Sunday in Dart → % 7 = 0)
+    final dayOfWeek = now.weekday % 7;
+    _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
+  }
+
+  List<DateTime> get _weekDays =>
+      List.generate(7, (i) => _weekStart.add(Duration(days: i)));
+
+  bool _hasEventsOn(DateTime date) {
+    return EventsData.getAllEvents().any((e) =>
+        e.dateTime.year == date.year &&
+        e.dateTime.month == date.month &&
+        e.dateTime.day == date.day);
+  }
+
+  List<SportingEvent> get _filteredEvents {
+    return EventsData.getAllEvents().where((e) =>
+        e.dateTime.year == _selectedDate.year &&
+        e.dateTime.month == _selectedDate.month &&
+        e.dateTime.day == _selectedDate.day).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final events = _filteredEvents;
+    final Map<String, List<SportingEvent>> grouped = {};
+    for (final e in events) {
+      grouped.putIfAbsent(e.formattedDate, () => []).add(e);
+    }
+    final dates = grouped.keys.toList();
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: Column(
+        children: [
+          // ── Blue calendar header ──
+          Container(
+            color: const Color(0xFF000399),
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  // Title + nav arrows
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left, color: Colors.white),
+                          onPressed: () => setState(() =>
+                              _weekStart = _weekStart.subtract(const Duration(days: 7))),
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              _monthNames[_weekDays[3].month],
+                              style: const TextStyle(
+                                color: Colors.white60,
+                                fontSize: 11,
+                                letterSpacing: 2,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'SCHEDULE',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right, color: Colors.white),
+                          onPressed: () => setState(() =>
+                              _weekStart = _weekStart.add(const Duration(days: 7))),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Day-of-week abbreviations
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: _dayAbbrevs
+                          .map((d) => Expanded(
+                                child: Center(
+                                  child: Text(
+                                    d,
+                                    style: const TextStyle(
+                                      color: Colors.white54,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                  // Date cells
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
+                    child: Row(
+                      children: _weekDays.map((date) {
+                        final isSelected = date.day == _selectedDate.day &&
+                            date.month == _selectedDate.month &&
+                            date.year == _selectedDate.year;
+                        final hasEvents = _hasEventsOn(date);
+                        return Expanded(
+                          child: GestureDetector(
+                            onTap: () => setState(() => _selectedDate = date),
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 2),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isSelected ? Colors.white : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '${date.day}',
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? const Color(0xFF000399)
+                                          : Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    width: 5,
+                                    height: 5,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: hasEvents
+                                          ? (isSelected
+                                              ? const Color(0xFF000399)
+                                              : Colors.white)
+                                          : Colors.transparent,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ── Date banner ──
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            color: const Color(0xFF00024A),
+            child: Text(
+              '${_monthNames[_selectedDate.month]} ${_selectedDate.day}, ${_selectedDate.year}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+
+          // ── Event list ──
+          Expanded(
+            child: dates.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No events scheduled for this day.',
+                      style: TextStyle(color: Colors.grey, fontSize: 15),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: dates.length,
+                    itemBuilder: (context, di) {
+                      final date = dates[di];
+                      final dayEvents = grouped[date]!;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                            color: const Color(0xFFF5F5F5),
+                            child: Text(
+                              date.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                          ...dayEvents.map((e) => _ScheduleEventTile(event: e)),
+                        ],
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScheduleEventTile extends StatelessWidget {
+  final SportingEvent event;
+  const _ScheduleEventTile({required this.event});
+
+  static const String _livestreamUrl =
+      'https://go.flocollege.com/partner/odac?utm_medium=partner&utm_source=multiple&utm_content=landingpage&utm_term=washington-and-lee-university&contract_id=0063m00000n3zlfaam';
+
+  /// Returns a proper street address for Google Maps based on the event location string.
+  String get _mapsAddress {
+    final loc = event.location;
+    final opp = event.opponent;
+
+    // ── W&L Home venues ──
+    if (loc.contains('Wilson Field'))                        return '100 Stadium Spur, Lexington, VA 24450';
+    if (loc.contains('Holekamp'))                            return '100 Warner Drive, Lexington, VA 24450';
+    if (loc.contains('Natatorium') || loc.contains('W&L')) return '100 Warner Drive, Lexington, VA 24450';
+    if (loc.contains('Dick Smith') || loc.contains("Cap'n Dick") || loc.contains('Cap\'n Dick')) return '100 Stadium Spur, Lexington, VA 24450';
+    if (loc.contains('Alston Parker') || loc.contains('Watt Field'))  return 'Alston Parker Watt Field, Washington and Lee University, Lexington, VA 24450';
+    if (loc.contains('Duchossois') || loc.contains('Warner Center'))  return '100 Warner Drive, Lexington, VA 24450';
+    if (loc.contains('Lexington'))                           return '204 W Washington St, Lexington, VA 24450';
+
+    // ── Away venues by city/location string ──
+    if (loc.contains('Ashland'))       return '204 Henry St, Ashland, VA 23005';           // Randolph-Macon
+    if (loc.contains('Hampden-Sydney') || loc.contains('Hampden Sydney')) return '80 College Road, Hampden Sydney, VA 23943';
+    if (loc.contains('Danville'))      return '707 Mount Cross Road, Danville, VA 24540';  // Averett
+    if (loc.contains('Winchester'))    return '1188 Ralph Shockey Dr, Winchester, VA 22601'; // Shenandoah
+    if (loc.contains('Williamsport'))  return '700 College Place, Williamsport, PA 17701'; // Lycoming
+    if (loc.contains('Fredericksburg'))return '1301 College Avenue, Fredericksburg, VA 22401'; // UMW
+    if (loc.contains('Harrisonburg')) {
+      // Disambiguate: EMU vs JMU
+      if (opp.contains('Eastern Mennonite') || opp.contains('EMU')) return '1200 Park Road, Harrisonburg, VA 22802';
+      return '895 University Blvd, Harrisonburg, VA 22807'; // JMU default
+    }
+    if (loc.contains('Staunton'))      return '128 Tams Street, Staunton, VA 24401';       // Mary Baldwin
+    if (loc.contains('Carlisle'))      return '272 West High Street, Carlisle, PA 17013';  // Dickinson
+    if (loc.contains('Meadville'))     return '520 North Main Street, Meadville, PA 16335'; // Allegheny
+    if (loc.contains('Virginia Beach'))return '5817 Wesleyan Drive, Virginia Beach, VA 23502'; // Virginia Wesleyan
+    if (loc.contains('Lynchburg'))     return '1501 Lakeside Drive, Lynchburg, VA 24501';  // U of Lynchburg
+    if (loc.contains('York'))          return '899 South Richland Avenue, York, PA 17403'; // York College
+    if (loc.contains('Newport News'))  return '1 University Place, Newport News, VA 23606'; // CNU
+    if (loc.contains('Gettysburg'))    return '300 North Washington Street, Gettysburg, PA 17325';
+    if (loc.contains('Owings Mills'))  return '100 Campus Circle, Owings Mills, MD 21117'; // Stevenson
+    if (loc.contains('Greensboro'))    return '5800 West Friendly Avenue, Greensboro, NC 27410'; // Guilford
+    if (loc.contains('Bridgewater'))   return '402 East College Street, Bridgewater, VA 22812';
+    if (loc.contains('Granville'))     return '100 West College Street, Granville, OH 43023'; // Denison
+    if (loc.contains('Sparks') || loc.contains('Geneva')) return '210 St Clair Street, Geneva, NY 14456'; // William Smith
+    if (loc.contains('Berea'))         return '275 Eastland Road, Berea, OH 44017';        // Baldwin Wallace
+    if (loc.contains('Arlington'))     return '2807 North Glebe Road, Arlington, VA 22207'; // Marymount
+    if (loc.contains('Salem'))         return '221 College Lane, Salem, VA 24153';          // Roanoke College
+    if (loc.contains('Salisbury'))     return '1101 Camden Avenue, Salisbury, MD 21801';
+    if (loc.contains('Lancaster'))     return '933 Harrisburg Avenue, Lancaster, PA 17603'; // F&M
+    if (loc.contains('Buena Vista'))   return '1 University Hill Drive, Buena Vista, VA 24416'; // SVU
+    if (loc.contains('Asheboro') || loc.contains('McCrary')) return '138 Southway Road, Asheboro, NC 27205';
+    if (loc.contains('Kannapolis'))    return '1 Cannon Baller Way, Kannapolis, NC 28081';
+    if (loc.contains('Charlotte'))     return '1 Cannon Baller Way, Kannapolis, NC 28081';
+    if (loc.contains('Grantham') || loc.contains('Mechanicsburg')) return '1 University Avenue, Mechanicsburg, PA 17055'; // Messiah
+    if (loc.contains('Springfield'))   return '1291 N Yellow Springs St, Springfield, OH 45503'; // Wittenberg
+    if (loc.contains('Daytona'))       return 'Ocean Center, 101 N Atlantic Ave, Daytona Beach, FL 32118';
+    if (loc.contains('Pittsburgh'))    return '5000 Forbes Avenue, Pittsburgh, PA 15213';  // CMU
+    if (loc.contains('Roanoke'))       return '7916 Williamson Road, Roanoke, VA 24020';   // Hollins
+
+    return event.location; // fallback to whatever is stored
+  }
+
+  void _showEventDetail(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle bar
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Sport + opponent header
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF000399),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(_sportIcon(event.sport), color: Colors.white, size: 22),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        event.sport.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: Color(0xFF000399),
+                        ),
+                      ),
+                      Text(
+                        '${event.isHome ? 'vs' : '@'} ${event.opponent}',
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Divider(height: 1),
+            const SizedBox(height: 14),
+
+            // Date & time
+            Row(
+              children: [
+                const Icon(Icons.access_time, size: 16, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text(
+                  '${event.formattedDate}  •  ${event.formattedTime}',
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // Location / address
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.place, size: 16, color: Colors.grey),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _mapsAddress,
+                    style: const TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 22),
+
+            // Directions button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF000399),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                icon: const Icon(Icons.directions, size: 18),
+                label: const Text('Get Directions', style: TextStyle(fontSize: 15)),
+                onPressed: () {
+                  final query = Uri.encodeComponent(_mapsAddress);
+                  launchUrl(
+                    Uri.parse('https://www.google.com/maps/search/?api=1&query=$query'),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Watch Live button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00024A),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                icon: const Icon(Icons.play_circle_outline, size: 18),
+                label: const Text('Watch Live', style: TextStyle(fontSize: 15)),
+                onPressed: () => launchUrl(
+                  Uri.parse(_livestreamUrl),
+                  mode: LaunchMode.externalApplication,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => _showEventDetail(context),
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            // Sport name row
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+              child: Row(
+                children: [
+                  Icon(_sportIcon(event.sport), size: 18, color: Colors.black87),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      event.sport.toUpperCase(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right, color: Colors.grey, size: 18),
+                ],
+              ),
+            ),
+            // Opponent row
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 24,
+                    child: Text(
+                      event.isHome ? 'VS' : '@',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      event.opponent.toUpperCase(),
+                      style: const TextStyle(fontSize: 13, color: Colors.black87),
+                    ),
+                  ),
+                  Text(
+                    event.formattedTime,
+                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1, indent: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// WORKOUT CLASSES PAGE
+// ─────────────────────────────────────────────
+class WorkoutClassesPage extends StatelessWidget {
+  final bool showBackButton;
+  const WorkoutClassesPage({super.key, this.showBackButton = true});
+
+  static const List<Map<String, dynamic>> _schedule = [
+    {
+      'day': 'Sunday',
+      'classes': [
+        {'time': '1:00 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Monday',
+      'classes': [
+        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness'},
+        {'time': '7:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Tuesday',
+      'classes': [
+        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '12:00 PM', 'name': 'Open Dancing', 'type': 'fitness'},
+        {'time': '5:30 PM', 'name': 'Pilates', 'type': 'fitness'},
+        {'time': '6:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Wednesday',
+      'classes': [
+        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '6:00 PM', 'name': 'Tone45', 'type': 'fitness'},
+        {'time': '7:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Thursday',
+      'classes': [
+        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '5:30 PM', 'name': 'Tone45', 'type': 'fitness'},
+        {'time': '6:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Friday',
+      'classes': [
+        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness'},
+        {'time': '5:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Saturday',
+      'classes': [
+        {'time': '10:00 AM', 'name': 'Spin', 'type': 'fitness'},
+        {'time': '5:00 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Workout Classes'),
+        leading: showBackButton
+            ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context))
+            : null,
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _schedule.length,
+        itemBuilder: (context, index) {
+          final dayData = _schedule[index];
+          final classes = dayData['classes'] as List<Map<String, dynamic>>;
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: ExpansionTile(
+              initiallyExpanded: true,
+              leading: CircleAvatar(
+                backgroundColor: const Color(0xFF000399),
+                child: Text(
+                  (dayData['day'] as String).substring(0, 2),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              title: Text(
+                dayData['day'] as String,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('${classes.length} classes'),
+              children: classes.map((cls) {
+                final isSwim = cls['type'] == 'swim';
+                final isOpenSwim = (cls['name'] as String).contains('Open Swim');
+                return ListTile(
+                  dense: true,
+                  leading: Icon(
+                    isSwim ? Icons.pool : Icons.fitness_center,
+                    size: 18,
+                    color: isSwim ? Colors.blue[700] : const Color(0xFF000399),
+                  ),
+                  title: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: isSwim ? Colors.blue[50] : const Color(0xFFEEEEFF),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          cls['time'] as String,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: isSwim ? Colors.blue[700] : const Color(0xFF000399),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Flexible(child: Text(cls['name'] as String, style: const TextStyle(fontSize: 14))),
+                    ],
+                  ),
+                  trailing: isOpenSwim
+                      ? null
+                      : SizedBox(
+                          width: 72,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF000399),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                              textStyle: const TextStyle(fontSize: 11),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            onPressed: () => _showClassSignUpDialog(
+                              context,
+                              cls['name'] as String,
+                              dayData['day'] as String,
+                              cls['time'] as String,
+                            ),
+                            child: const Text('Sign Up'),
+                          ),
+                        ),
+                );
+              }).toList(),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showClassSignUpDialog(BuildContext context, String className, String day, String time) {
+    final nameController = TextEditingController();
+    final emailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Sign Up — $className'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('$day at $time', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+            const SizedBox(height: 12),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Full Name', border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: 'W&L Email', border: OutlineInputBorder()),
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF000399),
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Signed up for $className on $day at $time!'),
+                  backgroundColor: const Color(0xFF000399),
+                ),
+              );
+            },
+            child: const Text('Submit'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// FACILITY HOURS PAGE
+// ─────────────────────────────────────────────
+class FacilityHoursPage extends StatelessWidget {
+  const FacilityHoursPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Facility Hours'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: const [
+          _DuchossoisHoursCard(),
+          _HoursCard(facility: 'Natatorium', hours: 'Mon–Fri: 6:30 AM – 9:00 PM\nSat–Sun: 10:00 AM – 6:00 PM'),
+          _HoursCard(facility: 'Fitness Center', hours: 'Mon–Fri: 5:30 AM – 11:00 PM\nSat–Sun: 7:00 AM – 10:00 PM'),
+          _HoursCard(facility: 'Outdoor Track', hours: 'Daily: 6:00 AM – 9:00 PM'),
+          _HoursCard(facility: 'Wilson Field', hours: 'Daily: 6:00 AM – Dark'),
+          _HoursCard(facility: 'Captain Dick Smith Baseball Field', hours: 'Daily: 6:00 AM – Dark'),
+          _HoursCard(facility: 'Fuge Field', hours: 'Daily: Dawn – Dusk'),
+        ],
+      ),
+    );
+  }
+}
+
+class _HoursCard extends StatelessWidget {
+  final String facility;
+  final String hours;
+  const _HoursCard({required this.facility, required this.hours});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: const CircleAvatar(
+          backgroundColor: Color(0xFF000399),
+          child: Icon(Icons.access_time, color: Colors.white),
+        ),
+        title: Text(facility, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(hours),
+        isThreeLine: true,
+      ),
+    );
+  }
+}
+
+class _DuchossoisHoursCard extends StatelessWidget {
+  const _DuchossoisHoursCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ExpansionTile(
+        leading: const CircleAvatar(
+          backgroundColor: Color(0xFF000399),
+          child: Icon(Icons.access_time, color: Colors.white),
+        ),
+        title: const Text(
+          'Richard L. Duchossois Athletic and Recreation Center',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: const Text(
+          'Mon–Fri: 6:00 AM – 11:00 PM\nSat–Sun: 8:00 AM – 10:00 PM',
+        ),
+        trailing: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'click for\nbusy hours',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 9,
+                color: Color(0xFF000399),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            Icon(Icons.expand_more, size: 18, color: Colors.grey),
+          ],
+        ),
+        children: const [
+          Divider(height: 1),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: _BusyHoursCard(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BusyHoursCard extends StatelessWidget {
+  const _BusyHoursCard();
+
+  // (time label, busyness 0.0–1.0)
+  static const List<(String, double)> _weekdaySlots = [
+    ('6 AM',  0.10),
+    ('8 AM',  0.20),
+    ('10 AM', 0.40),
+    ('12 PM', 0.85),
+    ('2 PM',  0.50),
+    ('4 PM',  0.72),
+    ('6 PM',  0.95),
+    ('8 PM',  0.42),
+    ('10 PM', 0.15),
+  ];
+
+  static const List<(String, double)> _weekendSlots = [
+    ('8 AM',  0.10),
+    ('10 AM', 0.38),
+    ('12 PM', 0.65),
+    ('2 PM',  0.58),
+    ('4 PM',  0.30),
+    ('6 PM',  0.15),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Color(0xFF000399),
+                  child: Icon(Icons.bar_chart, color: Colors.white),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Duchossois Center — Predicted Busy Times',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      Text(
+                        'Estimates based on typical student patterns',
+                        style: TextStyle(fontSize: 11, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Text('Typical Weekday', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            const SizedBox(height: 8),
+            ..._weekdaySlots.map((s) => _busyRow(s.$1, s.$2)),
+            const SizedBox(height: 12),
+            const Text('Typical Weekend', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            const SizedBox(height: 8),
+            ..._weekendSlots.map((s) => _busyRow(s.$1, s.$2)),
+            const SizedBox(height: 12),
+            const Row(
+              children: [
+                _LegendDot(color: Colors.green, label: 'Light'),
+                SizedBox(width: 16),
+                _LegendDot(color: Colors.orange, label: 'Moderate'),
+                SizedBox(width: 16),
+                _LegendDot(color: Colors.red, label: 'Busy'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _busyRow(String time, double busyness) {
+    final Color color;
+    final String label;
+    if (busyness < 0.35) {
+      color = Colors.green;
+      label = 'Light';
+    } else if (busyness < 0.70) {
+      color = Colors.orange;
+      label = 'Moderate';
+    } else {
+      color = Colors.red;
+      label = 'Busy';
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 52,
+            child: Text(time, style: const TextStyle(fontSize: 12)),
+          ),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: busyness,
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation<Color>(color),
+                minHeight: 16,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 58,
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LegendDot extends StatelessWidget {
+  final Color color;
+  final String label;
+  const _LegendDot({required this.color, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 4),
+        Text(label, style: const TextStyle(fontSize: 11)),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// VARSITY SPORTS PAGE
+// ─────────────────────────────────────────────
+class VarsitySportsPage extends StatelessWidget {
+  final bool showBackButton;
+  const VarsitySportsPage({super.key, this.showBackButton = true});
+
+  @override
+  Widget build(BuildContext context) {
+    final allSports = EventsData.getAllSports();
+    final upcomingEvents = EventsData.getUpcomingEvents();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Varsity Sports'),
+        leading: showBackButton
+            ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context))
+            : null,
+      ),
+      body: ListView(
+        children: [
+          _SectionHeader(icon: Icons.event, label: 'Upcoming Events'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: upcomingEvents.isEmpty
+                  ? [const Center(child: Padding(padding: EdgeInsets.all(16), child: Text('No upcoming events')))]
+                  : upcomingEvents.map((e) => _EventCard(event: e)).toList(),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _SectionHeader(icon: Icons.sports, label: 'Sports by Category'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: allSports.map((sport) {
+                final events = EventsData.getEventsBySport(sport);
+                return _SportCard(sport: sport, events: events);
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _SectionHeader({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      color: const Color(0xFF000399),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white),
+          const SizedBox(width: 8),
+          Text(label,
+              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+}
+
+class _EventCard extends StatelessWidget {
+  final SportingEvent event;
+  const _EventCard({required this.event});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10, top: 10),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: const Color(0xFF000399),
+          child: Icon(_sportIcon(event.sport), color: Colors.white, size: 20),
+        ),
+        title: Text(
+          '${event.sport} ${event.homeAwayText} ${event.opponent}',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        subtitle: Text('${event.formattedDate} • ${event.formattedTime}\n${event.location}',
+            style: const TextStyle(fontSize: 12)),
+        isThreeLine: true,
+        trailing: Chip(
+          label: Text(event.isHome ? 'Home' : 'Away', style: const TextStyle(fontSize: 10)),
+          backgroundColor: event.isHome ? const Color(0xFFE8F5E9) : const Color(0xFFFFEBEE),
+          padding: EdgeInsets.zero,
+        ),
+      ),
+    );
+  }
+}
+
+class _SportCard extends StatelessWidget {
+  final String sport;
+  final List<SportingEvent> events;
+  const _SportCard({required this.sport, required this.events});
+
+  @override
+  Widget build(BuildContext context) {
+    final upcomingCount = events.where((e) => e.dateTime.isAfter(DateTime.now())).length;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12, top: 4),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ExpansionTile(
+        leading: CircleAvatar(
+          backgroundColor: const Color(0xFF000399),
+          child: Icon(_sportIcon(sport), color: Colors.white, size: 20),
+        ),
+        title: Text(sport, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text('$upcomingCount upcoming games'),
+        children: events.take(5).map((event) {
+          return ListTile(
+            dense: true,
+            title: Text('${event.homeAwayText} ${event.opponent}',
+                style: const TextStyle(fontSize: 13)),
+            subtitle: Text('${event.formattedDate} • ${event.formattedTime}',
+                style: const TextStyle(fontSize: 11)),
+            trailing: Icon(
+              event.isHome ? Icons.home : Icons.flight_takeoff,
+              size: 16,
+              color: Colors.grey[600],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// CLUB SPORTS PAGE
+// ─────────────────────────────────────────────
+class ClubSportsPage extends StatelessWidget {
+  final bool showBackButton;
+  const ClubSportsPage({super.key, this.showBackButton = true});
+
+  static const List<Map<String, String>> _clubs = [
+    {'name': 'Ultimate Frisbee', 'season': 'Fall & Spring', 'contact': 'ultimate@wlu.edu', 'icon': 'frisbee'},
+    {'name': 'Rugby', 'season': 'Fall & Spring', 'contact': 'rugby@wlu.edu', 'icon': 'rugby'},
+    {'name': 'Club Soccer', 'season': 'Fall & Spring', 'contact': 'clubsoccer@wlu.edu', 'icon': 'soccer'},
+    {'name': 'Crew / Rowing', 'season': 'Fall & Spring', 'contact': 'crew@wlu.edu', 'icon': 'rowing'},
+    {'name': 'Volleyball', 'season': 'Fall & Spring', 'contact': 'volleyball@wlu.edu', 'icon': 'volleyball'},
+    {'name': 'Cycling', 'season': 'Spring', 'contact': 'cycling@wlu.edu', 'icon': 'cycling'},
+    {'name': 'Rock Climbing', 'season': 'Year-Round', 'contact': 'climbing@wlu.edu', 'icon': 'climbing'},
+    {'name': 'Equestrian', 'season': 'Fall & Spring', 'contact': 'equestrian@wlu.edu', 'icon': 'equestrian'},
+    {'name': 'Skiing / Snowboarding', 'season': 'Winter', 'contact': 'skiing@wlu.edu', 'icon': 'skiing'},
+    {'name': 'Tennis', 'season': 'Spring', 'contact': 'clubtennis@wlu.edu', 'icon': 'tennis'},
+    {'name': 'Golf', 'season': 'Fall & Spring', 'contact': 'clubgolf@wlu.edu', 'icon': 'golf'},
+    {'name': 'Pickleball', 'season': 'Year-Round', 'contact': 'pickleball@wlu.edu', 'icon': 'pickleball'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Club Sports'),
+        leading: showBackButton
+            ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context))
+            : null,
+      ),
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            color: const Color(0xFF0D47A1).withValues(alpha: 0.08),
+            child: const Text(
+              'Interested in joining a club sport? Browse the list below and tap "Sign Up" to register your interest.',
+              style: TextStyle(fontSize: 14, color: Colors.black87),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _clubs.length,
+              itemBuilder: (context, index) {
+                final club = _clubs[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: const Color(0xFF0D47A1),
+                          child: Icon(_clubIcon(club['icon']!), color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(club['name']!,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                              const SizedBox(height: 2),
+                              Text('Season: ${club['season']!}',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF000399),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 13),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () => _showSignUpDialog(context, club['name']!),
+                          child: const Text('Sign Up'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSignUpDialog(BuildContext context, String sportName) {
+    final nameController = TextEditingController();
+    final emailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Sign Up — $sportName'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Full Name', border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: 'W&L Email', border: OutlineInputBorder()),
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF000399),
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Interest submitted for $sportName! The club will be in touch.'),
+                  backgroundColor: const Color(0xFF000399),
+                ),
+              );
+            },
+            child: const Text('Submit'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _clubIcon(String type) {
+    switch (type) {
+      case 'soccer': return Icons.sports_soccer;
+      case 'rugby': return Icons.sports_rugby;
+      case 'volleyball': return Icons.sports_volleyball;
+      case 'tennis': return Icons.sports_tennis;
+      case 'golf': return Icons.golf_course;
+      case 'rowing': return Icons.rowing;
+      case 'cycling': return Icons.directions_bike;
+      case 'climbing': return Icons.terrain;
+      case 'skiing': return Icons.downhill_skiing;
+      default: return Icons.groups;
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+// CAMPUS MAP PAGE
+// ─────────────────────────────────────────────
+class CampusMapPage extends StatelessWidget {
+  const CampusMapPage({super.key});
+
+  static const List<Map<String, String>> _facilities = [
+    {
+      'name': 'Richard L. Duchossois Athletic and Recreation Center',
+      'description': 'Main athletics & recreation center. Home to basketball, volleyball, fitness center, and more.',
+      'icon': 'gym',
+      'maps': 'https://maps.google.com/maps?q=Duchossois+Athletic+Recreation+Center+Washington+and+Lee+University+Lexington+VA',
+    },
+    {
+      'name': 'Natatorium',
+      'description': 'Indoor aquatics facility. Home to Men\'s & Women\'s Swimming & Diving.',
+      'icon': 'pool',
+      'maps': 'https://maps.google.com/maps?q=Natatorium+Washington+and+Lee+University+Lexington+VA',
+    },
+    {
+      'name': 'Wilson Field',
+      'description': 'Football stadium and track complex on the south end of campus.',
+      'icon': 'football',
+      'maps': 'https://maps.google.com/maps?q=Wilson+Field+Washington+and+Lee+University+Lexington+VA',
+    },
+    {
+      'name': 'Captain Dick Smith Baseball Field',
+      'description': 'Home of Generals Baseball.',
+      'icon': 'baseball',
+      'maps': 'https://maps.google.com/maps?q=Captain+Dick+Smith+Baseball+Field+Washington+and+Lee+University+Lexington+VA',
+    },
+    {
+      'name': 'Fitness Center',
+      'description': 'Cardio and weight training facility inside the Duchossois Athletic and Recreation Center.',
+      'icon': 'fitness',
+      'maps': 'https://maps.google.com/maps?q=Duchossois+Athletic+Recreation+Center+Washington+and+Lee+University+Lexington+VA',
+    },
+    {
+      'name': 'Outdoor Track',
+      'description': 'All-weather track used for track & field events and open recreation.',
+      'icon': 'track',
+      'maps': 'https://maps.google.com/maps?q=Track+Washington+and+Lee+University+Lexington+VA',
+    },
+    {
+      'name': 'Alston Parker Watt Field',
+      'description': "Turf field — home to Men's Soccer, Women's Lacrosse, and field hockey.",
+      'icon': 'field',
+      'maps': 'https://maps.google.com/maps?q=Alston+Parker+Watt+Field+Washington+and+Lee+University+Lexington+VA',
+    },
+    {
+      'name': 'Fuge Field',
+      'description': 'General recreation and intramural field for student use.',
+      'icon': 'field',
+      'maps': 'https://maps.google.com/maps?q=Fuge+Field+Washington+and+Lee+University+Lexington+VA',
+    },
+    {
+      'name': 'Duchossois Tennis Center',
+      'description': 'Indoor and outdoor tennis courts for varsity and recreational play.',
+      'icon': 'tennis',
+      'maps': 'https://maps.google.com/maps?q=Duchossois+Tennis+Center+Washington+and+Lee+University+Lexington+VA',
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Campus Map'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.open_in_new),
+            tooltip: 'Open Google Maps',
+            onPressed: () => launchUrl(
+              Uri.parse('https://www.google.com/maps/search/Washington+and+Lee+University+Athletics+Lexington+VA'),
+              mode: LaunchMode.externalApplication,
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Embedded interactive map
+          Container(
+            height: 340,
+            color: Colors.grey[200],
+            child: const HtmlElementView(viewType: 'campus-map-iframe'),
+          ),
+          // Sporting facilities list
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            color: const Color(0xFF1B5E20),
+            child: const Row(
+              children: [
+                Icon(Icons.place, color: Colors.white),
+                SizedBox(width: 8),
+                Text(
+                  'Sporting Facilities',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _facilities.length,
+              itemBuilder: (context, index) {
+                final f = _facilities[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: const Color(0xFF1B5E20),
+                          child: Icon(_facilityIcon(f['icon']!), color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(f['name']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                              const SizedBox(height: 2),
+                              Text(f['description']!, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1B5E20),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 11),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () => launchUrl(
+                            Uri.parse(f['maps']!),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                          icon: const Icon(Icons.directions, size: 14),
+                          label: const Text('Directions'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _facilityIcon(String type) {
+    switch (type) {
+      case 'pool':     return Icons.pool;
+      case 'football': return Icons.sports_football;
+      case 'baseball': return Icons.sports_baseball;
+      case 'fitness':  return Icons.fitness_center;
+      case 'track':    return Icons.directions_run;
+      case 'tennis':   return Icons.sports_tennis;
+      case 'field':    return Icons.grass;
+      case 'outing':   return Icons.hiking;
+      default:         return Icons.stadium;
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+// RESULTS PAGE
+// ─────────────────────────────────────────────
+class ResultsPage extends StatefulWidget {
+  const ResultsPage({super.key});
+
+  @override
+  State<ResultsPage> createState() => _ResultsPageState();
+}
+
+class _ResultsPageState extends State<ResultsPage> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  static const List<String> _sports = [
+    'All',
+    "Women's Basketball",
+    "Men's Basketball",
+    'Baseball',
+    "Men's Lacrosse",
+    "Women's Lacrosse",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _sports.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Results'),
+        automaticallyImplyLeading: false,
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white60,
+          indicatorColor: Colors.white,
+          tabs: _sports.map((s) => Tab(text: s)).toList(),
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: _sports.map((sport) {
+          final results = sport == 'All'
+              ? EventsData.getResults()
+              : EventsData.getResults().where((e) => e.sport == sport).toList();
+          return _buildResultsList(results);
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildResultsList(List<SportingEvent> results) {
+    if (results.isEmpty) {
+      return const Center(child: Text('No results yet.', style: TextStyle(color: Colors.grey)));
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        final event = results[index];
+        final result = event.result ?? '';
+        final isWin = result.startsWith('W');
+        final isLoss = result.startsWith('L');
+        final Color chipColor = isWin ? Colors.green : (isLoss ? Colors.red[700]! : Colors.grey);
+        final score = result.length > 2 ? result.substring(2) : result;
+
+        return Card(
+          margin: const EdgeInsets.only(bottom: 10),
+          elevation: 2,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(color: chipColor, borderRadius: BorderRadius.circular(8)),
+                  child: Center(
+                    child: Text(
+                      result.isNotEmpty ? result[0] : '?',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${event.homeAwayText} ${event.opponent}',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      Text(
+                        '${event.formattedDate} · ${event.sport}',
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  score,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: isWin ? Colors.green[700] : (isLoss ? Colors.red[700] : Colors.grey[700]),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// MORE MENU PAGE (bottom nav tab 5)
+// ─────────────────────────────────────────────
+class _MoreMenuPage extends StatelessWidget {
+  const _MoreMenuPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'MORE',
+          style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold),
+        ),
+        automaticallyImplyLeading: false,
+      ),
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 12),
+            child: Text(
+              'SPORTS',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.grey),
+            ),
+          ),
+          _NavCard(
+            title: 'Varsity Sports',
+            description: 'Game schedules, upcoming events & results for all Generals sports.',
+            icon: Icons.emoji_events,
+            color: const Color(0xFF000399),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VarsitySportsPage())),
+          ),
+          const SizedBox(height: 12),
+          _NavCard(
+            title: 'Club Sports',
+            description: 'Browse and sign up for student-run club sports at Washington & Lee.',
+            icon: Icons.groups,
+            color: const Color(0xFF0D47A1),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClubSportsPage())),
+          ),
+          const SizedBox(height: 12),
+          const Padding(
+            padding: EdgeInsets.only(top: 24, bottom: 12),
+            child: Text(
+              'FACILITIES',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.grey),
+            ),
+          ),
+          _NavCard(
+            title: 'Facility Hours',
+            description: 'Operating hours for the Duchossois Center, Natatorium, fields & more.',
+            icon: Icons.schedule,
+            color: const Color(0xFF1A237E),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FacilityHoursPage())),
+          ),
+          const SizedBox(height: 12),
+          _NavCard(
+            title: 'Campus Map',
+            description: 'Interactive map of W&L — find sporting facilities, fields & venues.',
+            icon: Icons.map,
+            color: const Color(0xFF1B5E20),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CampusMapPage())),
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// SHARED HELPERS
+// ─────────────────────────────────────────────
+IconData _sportIcon(String sport) {
+  if (sport.contains('Basketball')) return Icons.sports_basketball;
+  if (sport.contains('Football')) return Icons.sports_football;
+  if (sport.contains('Swimming')) return Icons.pool;
+  if (sport.contains('Lacrosse')) return Icons.sports_hockey;
+  if (sport.contains('Baseball')) return Icons.sports_baseball;
+  if (sport.contains('Wrestling')) return Icons.sports_kabaddi;
+  return Icons.sports;
+}

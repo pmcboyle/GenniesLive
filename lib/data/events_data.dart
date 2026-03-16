@@ -1,0 +1,760 @@
+import '../models/sporting_event.dart';
+
+class EventsData {
+  static List<SportingEvent> getAllEvents() {
+    return [
+      // Football - Fall 2025
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Salisbury University',
+        dateTime: DateTime(2025, 9, 6, 13, 0),
+        location: 'Wilson Field, Lexington, VA',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Wittenberg University',
+        dateTime: DateTime(2025, 9, 13, 13, 0),
+        location: 'Springfield, Ohio',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Guilford College',
+        dateTime: DateTime(2025, 9, 20, 16, 0),
+        location: 'Wilson Field, Lexington, VA',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Randolph-Macon College',
+        dateTime: DateTime(2025, 9, 27, 12, 0),
+        location: 'Ashland, VA',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Hampden-Sydney College',
+        dateTime: DateTime(2025, 10, 4, 13, 0),
+        location: 'Hampden-Sydney, VA',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Gallaudet University',
+        dateTime: DateTime(2025, 10, 11, 13, 0),
+        location: 'Wilson Field, Lexington, VA',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Bridgewater College',
+        dateTime: DateTime(2025, 10, 25, 16, 0),
+        location: 'Wilson Field, Lexington, VA',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Averett University',
+        dateTime: DateTime(2025, 11, 1, 16, 0),
+        location: 'Danville, VA',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Roanoke College',
+        dateTime: DateTime(2025, 11, 8, 13, 0),
+        location: 'Wilson Field, Lexington, VA',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Shenandoah University',
+        dateTime: DateTime(2025, 11, 15, 13, 0),
+        location: 'Winchester, VA',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Football',
+        opponent: 'Lycoming College',
+        dateTime: DateTime(2025, 11, 22, 12, 0),
+        location: 'Williamsport, PA',
+        isHome: false,
+      ),
+
+      // Men's Basketball - Fall 2025
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'University of Mary Washington',
+        dateTime: DateTime(2025, 11, 1, 16, 0),
+        location: 'Fredericksburg, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'James Madison University',
+        dateTime: DateTime(2025, 11, 5, 19, 0),
+        location: 'Harrisonburg, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'Salisbury University',
+        dateTime: DateTime(2025, 11, 14, 19, 30),
+        location: 'Grantham, Pa.',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'St. Joseph\'s University (Brooklyn)',
+        dateTime: DateTime(2025, 11, 15, 16, 0),
+        location: 'Grantham, Pa.',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'Mary Baldwin University',
+        dateTime: DateTime(2025, 11, 19, 18, 0),
+        location: 'Staunton, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'Dickinson College',
+        dateTime: DateTime(2025, 11, 22, 14, 0),
+        location: 'Carlisle, Pa.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'Southern Virginia University',
+        dateTime: DateTime(2025, 11, 25, 14, 0),
+        location: 'Holekamp Gym, Lexington, Va.',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'Averett University',
+        dateTime: DateTime(2025, 12, 3, 19, 0),
+        location: 'Holekamp Gym, Lexington, Va.',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'Trine University',
+        dateTime: DateTime(2025, 12, 15, 12, 0),
+        location: 'Daytona Beach, Fla.',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'SUNY Brockport',
+        dateTime: DateTime(2025, 12, 16, 12, 0),
+        location: 'Daytona Beach, Fla.',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Basketball',
+        opponent: 'Mount Saint Mary (N.Y.)',
+        dateTime: DateTime(2025, 12, 29, 14, 0),
+        location: 'Holekamp Gym, Lexington, Va.',
+        isHome: true,
+      ),
+
+      // Women's Basketball
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'Allegheny College',
+        dateTime: DateTime(2025, 11, 8, 15, 0),
+        location: 'Meadville, Pa.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'Chatham University',
+        dateTime: DateTime(2025, 11, 9, 13, 0),
+        location: 'Meadville, Pa.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'Southern Virginia University',
+        dateTime: DateTime(2025, 11, 12, 19, 30),
+        location: 'Holekamp Gym',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'Washington College (Md.)',
+        dateTime: DateTime(2025, 11, 15, 19, 0),
+        location: 'Virginia Beach, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'Virginia Wesleyan University',
+        dateTime: DateTime(2025, 11, 16, 15, 0),
+        location: 'Virginia Beach, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'University of Lynchburg',
+        dateTime: DateTime(2025, 11, 22, 13, 0),
+        location: 'Holekamp Gym',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'Averett University',
+        dateTime: DateTime(2025, 12, 2, 18, 0),
+        location: 'Danville, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'Stevenson University',
+        dateTime: DateTime(2025, 12, 13, 14, 0),
+        location: 'Holekamp Gym',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'University of New England',
+        dateTime: DateTime(2025, 12, 20, 14, 0),
+        location: 'Daytona Beach, Fla.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Basketball',
+        opponent: 'Carroll University',
+        dateTime: DateTime(2025, 12, 21, 14, 0),
+        location: 'Daytona Beach, Fla.',
+        isHome: false,
+      ),
+
+      // Wrestling
+      SportingEvent(
+        sport: 'Wrestling',
+        opponent: 'Messiah Invite',
+        dateTime: DateTime(2025, 11, 1, 9, 0),
+        location: 'Grantham, Pa.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Wrestling',
+        opponent: 'Cougar Open',
+        dateTime: DateTime(2025, 11, 9, 9, 0),
+        location: 'Danville, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Wrestling',
+        opponent: 'Marymount University',
+        dateTime: DateTime(2025, 11, 15, 11, 30),
+        location: 'Arlington, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Wrestling',
+        opponent: 'Messiah University',
+        dateTime: DateTime(2025, 11, 15, 14, 30),
+        location: 'Arlington, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Wrestling',
+        opponent: 'Shenandoah Invite',
+        dateTime: DateTime(2025, 11, 16, 10, 0),
+        location: 'Winchester, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Wrestling',
+        opponent: 'Baldwin Wallace',
+        dateTime: DateTime(2025, 11, 21, 19, 0),
+        location: 'Berea, Ohio',
+        isHome: false,
+      ),
+
+      // Men's Swimming
+      SportingEvent(
+        sport: 'Men\'s Swimming',
+        opponent: 'Blue and White Intrasquad',
+        dateTime: DateTime(2025, 9, 20, 0, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Swimming',
+        opponent: 'ODAC Relays',
+        dateTime: DateTime(2025, 10, 4, 12, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Swimming',
+        opponent: 'University of Mary Washington',
+        dateTime: DateTime(2025, 10, 10, 13, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Swimming',
+        opponent: 'Carnegie Mellon University',
+        dateTime: DateTime(2025, 10, 18, 11, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Swimming',
+        opponent: 'University of Lynchburg',
+        dateTime: DateTime(2025, 10, 24, 18, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Swimming',
+        opponent: 'Southern Virginia University',
+        dateTime: DateTime(2025, 11, 7, 18, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+
+      // Women's Swimming
+      SportingEvent(
+        sport: 'Women\'s Swimming',
+        opponent: 'Blue and White Intrasquad',
+        dateTime: DateTime(2025, 9, 20, 12, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Swimming',
+        opponent: 'ODAC Relays',
+        dateTime: DateTime(2025, 10, 4, 12, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Swimming',
+        opponent: 'University of Mary Washington',
+        dateTime: DateTime(2025, 10, 10, 16, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Swimming',
+        opponent: 'Carnegie Mellon University',
+        dateTime: DateTime(2025, 10, 18, 11, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Swimming',
+        opponent: 'University of Lynchburg',
+        dateTime: DateTime(2025, 10, 24, 18, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Swimming',
+        opponent: 'Southern Virginia University',
+        dateTime: DateTime(2025, 11, 7, 18, 0),
+        location: 'W&L Natatorium',
+        isHome: true,
+      ),
+
+      // Baseball - Spring 2026
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'Greensboro College',
+        dateTime: DateTime(2026, 2, 13, 12, 0),
+        location: 'Asheboro, N.C. - McCrary Park',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'Greensboro College',
+        dateTime: DateTime(2026, 2, 14, 18, 0),
+        location: 'Asheboro, N.C. - McCrary Park',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'Greensboro College',
+        dateTime: DateTime(2026, 2, 15, 15, 0),
+        location: 'Asheboro, N.C. - McCrary Park',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'Piedmont University',
+        dateTime: DateTime(2026, 2, 20, 12, 0),
+        location: 'Kannapolis, N.C.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'Berry College',
+        dateTime: DateTime(2026, 2, 21, 14, 30),
+        location: 'Kannapolis, N.C.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'Swarthmore College',
+        dateTime: DateTime(2026, 2, 22, 10, 0),
+        location: 'Kannapolis, N.C.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'Johnson & Wales',
+        dateTime: DateTime(2026, 2, 24, 17, 30),
+        location: 'Charlotte, N.C.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'Randolph-Macon College',
+        dateTime: DateTime(2026, 2, 28, 12, 0),
+        location: 'Cap\'n Dick Smith Field, Lexington',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'Mary Baldwin University',
+        dateTime: DateTime(2026, 3, 3, 16, 0),
+        location: 'Cap\'n Dick Smith Field, Lexington',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Baseball',
+        opponent: 'University of Lynchburg',
+        dateTime: DateTime(2026, 3, 7, 11, 0),
+        location: 'Lynchburg, Va.',
+        isHome: false,
+      ),
+
+      // Men's Lacrosse - Spring 2026
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'York College',
+        dateTime: DateTime(2026, 2, 14, 13, 0),
+        location: 'York, Pa.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Christopher Newport University',
+        dateTime: DateTime(2026, 2, 18, 18, 0),
+        location: 'Newport News, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Ohio Northern University',
+        dateTime: DateTime(2026, 2, 21, 13, 0),
+        location: 'Wilson Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Denison University',
+        dateTime: DateTime(2026, 2, 28, 13, 0),
+        location: 'Wilson Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Gettysburg College',
+        dateTime: DateTime(2026, 3, 7, 13, 0),
+        location: 'Gettysburg, Pa.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Stevenson University',
+        dateTime: DateTime(2026, 3, 13, 20, 0),
+        location: 'Owings Mills, Md.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'RIT',
+        dateTime: DateTime(2026, 3, 14, 17, 45),
+        location: 'Owings Mills, Md.',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Roanoke College',
+        dateTime: DateTime(2026, 3, 18, 19, 0),
+        location: 'Wilson Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Virginia Wesleyan University',
+        dateTime: DateTime(2026, 3, 21, 13, 0),
+        location: 'Virginia Beach, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Guilford College',
+        dateTime: DateTime(2026, 3, 25, 18, 0),
+        location: 'Wilson Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Randolph-Macon College',
+        dateTime: DateTime(2026, 3, 28, 19, 0),
+        location: 'Ashland, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Bridgewater College',
+        dateTime: DateTime(2026, 4, 1, 16, 0),
+        location: 'Bridgewater, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Hampden-Sydney College',
+        dateTime: DateTime(2026, 4, 4, 13, 0),
+        location: 'Wilson Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Shenandoah University',
+        dateTime: DateTime(2026, 4, 7, 19, 0),
+        location: 'Winchester, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Averett University',
+        dateTime: DateTime(2026, 4, 8, 19, 0),
+        location: 'Wilson Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'Randolph College',
+        dateTime: DateTime(2026, 4, 18, 13, 0),
+        location: 'Wilson Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Men\'s Lacrosse',
+        opponent: 'University of Lynchburg',
+        dateTime: DateTime(2026, 4, 25, 19, 0),
+        location: 'Lynchburg, Va.',
+        isHome: false,
+      ),
+
+      // Women's Lacrosse - Spring 2026
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Franklin & Marshall',
+        dateTime: DateTime(2026, 2, 15, 12, 0),
+        location: 'Wilson Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Guilford',
+        dateTime: DateTime(2026, 2, 17, 16, 30),
+        location: 'Greensboro, N.C.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'University of Mary Washington',
+        dateTime: DateTime(2026, 2, 25, 17, 0),
+        location: 'Alston Parker Watt Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Eastern Mennonite University',
+        dateTime: DateTime(2026, 2, 28, 12, 0),
+        location: 'Harrisonburg, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Christopher Newport',
+        dateTime: DateTime(2026, 3, 4, 18, 0),
+        location: 'Alston Parker Watt Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Catholic',
+        dateTime: DateTime(2026, 3, 7, 12, 0),
+        location: 'Alston Parker Watt Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'York',
+        dateTime: DateTime(2026, 3, 14, 12, 0),
+        location: 'York, Pa.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Randolph-Macon',
+        dateTime: DateTime(2026, 3, 18, 19, 0),
+        location: 'Ashland, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Gettysburg',
+        dateTime: DateTime(2026, 3, 22, 13, 0),
+        location: 'Alston Parker Watt Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Virginia Wesleyan',
+        dateTime: DateTime(2026, 3, 28, 15, 0),
+        location: 'Alston Parker Watt Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Roanoke',
+        dateTime: DateTime(2026, 4, 1, 18, 0),
+        location: 'Alston Parker Watt Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Bridgewater',
+        dateTime: DateTime(2026, 4, 4, 16, 0),
+        location: 'Bridgewater, Va.',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Shenandoah',
+        dateTime: DateTime(2026, 4, 8, 18, 0),
+        location: 'Alston Parker Watt Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Lynchburg',
+        dateTime: DateTime(2026, 4, 18, 12, 0),
+        location: 'Alston Parker Watt Field',
+        isHome: true,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'Denison',
+        dateTime: DateTime(2026, 4, 21, 18, 0),
+        location: 'Granville, Ohio',
+        isHome: false,
+      ),
+      SportingEvent(
+        sport: 'Women\'s Lacrosse',
+        opponent: 'William Smith College',
+        dateTime: DateTime(2026, 4, 25, 12, 0),
+        location: 'Sparks, Md.',
+        isHome: false,
+      ),
+    ];
+  }
+
+  static List<SportingEvent> getResults() {
+    final results = [
+      // Women's Basketball — 14-0 (ODAC Champs + NCAA R2)
+      SportingEvent(sport: "Women's Basketball", opponent: 'Guilford College',             dateTime: DateTime(2026, 1, 23), location: 'Guilford, N.C.',          isHome: false, result: 'W 81-78'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Roanoke College',              dateTime: DateTime(2026, 1, 28), location: 'Holekamp Gym',             isHome: true,  result: 'W 69-47'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Virginia Wesleyan University', dateTime: DateTime(2026, 1, 31), location: 'Virginia Beach, Va.',      isHome: false, result: 'W 64-59'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Eastern Mennonite University', dateTime: DateTime(2026, 2, 4),  location: 'Holekamp Gym',             isHome: true,  result: 'W 70-28'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'University of Lynchburg',      dateTime: DateTime(2026, 2, 7),  location: 'Lynchburg, Va.',           isHome: false, result: 'W 67-33'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Randolph College',             dateTime: DateTime(2026, 2, 11), location: 'Holekamp Gym',             isHome: true,  result: 'W 88-46'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Hollins University',           dateTime: DateTime(2026, 2, 14), location: 'Holekamp Gym',             isHome: true,  result: 'W 118-51'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Bridgewater College',          dateTime: DateTime(2026, 2, 18), location: 'Bridgewater, Va.',         isHome: false, result: 'W 67-38'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Guilford College',             dateTime: DateTime(2026, 2, 21), location: 'Holekamp Gym',             isHome: true,  result: 'W 85-62'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Roanoke — ODAC QF',           dateTime: DateTime(2026, 2, 25), location: 'Holekamp Gym',             isHome: true,  result: 'W 73-55'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Shenandoah — ODAC SF',        dateTime: DateTime(2026, 2, 28), location: 'Holekamp Gym',             isHome: true,  result: 'W 66-52'),
+      SportingEvent(sport: "Women's Basketball", opponent: 'Randolph-Macon — ODAC Champs',dateTime: DateTime(2026, 3, 1),  location: 'Holekamp Gym',             isHome: true,  result: 'W 67-56'),
+      SportingEvent(sport: "Women's Basketball", opponent: "St. Mary's — NCAA R1",        dateTime: DateTime(2026, 3, 6),  location: 'Lexington, Va.',           isHome: true,  result: 'W 73-44'),
+      SportingEvent(sport: "Women's Basketball", opponent: '#14 Christopher Newport — NCAA R2', dateTime: DateTime(2026, 3, 7), location: 'Lexington, Va.',      isHome: true,  result: 'W 61-55'),
+
+      // Men's Basketball — 10-7
+      SportingEvent(sport: "Men's Basketball", opponent: 'Mount Saint Mary (N.Y.)',      dateTime: DateTime(2025, 12, 29), location: 'Holekamp Gym',        isHome: true,  result: 'W 94-39'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Kenyon College',               dateTime: DateTime(2025, 12, 30), location: 'Holekamp Gym',        isHome: true,  result: 'W 66-62'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Guilford College',             dateTime: DateTime(2026, 1, 3),   location: 'Holekamp Gym',        isHome: true,  result: 'W 90-88'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Virginia Wesleyan University', dateTime: DateTime(2026, 1, 7),   location: 'Virginia Beach, Va.', isHome: false, result: 'L 54-79'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Roanoke College',              dateTime: DateTime(2026, 1, 10),  location: 'Holekamp Gym',        isHome: true,  result: 'W 58-57'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Shenandoah University',        dateTime: DateTime(2026, 1, 14),  location: 'Holekamp Gym',        isHome: true,  result: 'W 73-69'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Randolph College',             dateTime: DateTime(2026, 1, 17),  location: 'Holekamp Gym',        isHome: true,  result: 'W 77-65'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Bridgewater College',          dateTime: DateTime(2026, 1, 21),  location: 'Holekamp Gym',        isHome: true,  result: 'W 69-59'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'University of Lynchburg',      dateTime: DateTime(2026, 1, 23),  location: 'Lynchburg, Va.',      isHome: false, result: 'L 59-73'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Averett University',           dateTime: DateTime(2026, 1, 28),  location: 'Danville, Va.',       isHome: false, result: 'L 63-79'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Randolph-Macon College',       dateTime: DateTime(2026, 1, 31),  location: 'Ashland, Va.',        isHome: false, result: 'L 66-82'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Roanoke College',              dateTime: DateTime(2026, 2, 4),   location: 'Holekamp Gym',        isHome: true,  result: 'W 64-56'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Guilford College',             dateTime: DateTime(2026, 2, 7),   location: 'Holekamp Gym',        isHome: true,  result: 'W 97-96'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Eastern Mennonite University', dateTime: DateTime(2026, 2, 11),  location: 'Harrisonburg, Va.',   isHome: false, result: 'L 60-62 OT'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Virginia Wesleyan University', dateTime: DateTime(2026, 2, 14),  location: 'Virginia Beach, Va.', isHome: false, result: 'L 59-76'),
+      SportingEvent(sport: "Men's Basketball", opponent: 'Bridgewater College',          dateTime: DateTime(2026, 2, 18),  location: 'Holekamp Gym',        isHome: true,  result: 'W 79-56'),
+
+      // Baseball — 6-3-1
+      SportingEvent(sport: 'Baseball', opponent: 'Piedmont University',        dateTime: DateTime(2026, 2, 20),       location: 'Kannapolis, N.C.',      isHome: false, result: 'W 7-5'),
+      SportingEvent(sport: 'Baseball', opponent: 'Berry College',              dateTime: DateTime(2026, 2, 21),       location: 'Kannapolis, N.C.',      isHome: false, result: 'L 1-11'),
+      SportingEvent(sport: 'Baseball', opponent: 'Swarthmore College',         dateTime: DateTime(2026, 2, 22),       location: 'Kannapolis, N.C.',      isHome: false, result: 'W 19-18'),
+      SportingEvent(sport: 'Baseball', opponent: 'Johnson & Wales',            dateTime: DateTime(2026, 2, 24),       location: 'Charlotte, N.C.',       isHome: false, result: 'W 9-0'),
+      SportingEvent(sport: 'Baseball', opponent: 'Randolph-Macon (G1)',        dateTime: DateTime(2026, 2, 28, 12, 0),location: "Cap'n Dick Smith Field", isHome: true,  result: 'W 8-3'),
+      SportingEvent(sport: 'Baseball', opponent: 'Randolph-Macon (G2)',        dateTime: DateTime(2026, 2, 28, 15, 0),location: "Cap'n Dick Smith Field", isHome: true,  result: 'L 5-9'),
+      SportingEvent(sport: 'Baseball', opponent: 'Mary Baldwin University',    dateTime: DateTime(2026, 3, 3),        location: "Cap'n Dick Smith Field", isHome: true,  result: 'W 13-6'),
+      SportingEvent(sport: 'Baseball', opponent: 'University of Lynchburg (G1)',dateTime: DateTime(2026, 3, 7, 11, 0),location: 'Lynchburg, Va.',        isHome: false, result: 'L 6-10'),
+      SportingEvent(sport: 'Baseball', opponent: 'University of Lynchburg (G2)',dateTime: DateTime(2026, 3, 7, 14, 0),location: 'Lynchburg, Va.',        isHome: false, result: 'T 9-9 (10 inn.)'),
+
+      // Men's Lacrosse — 2-3
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'York College (Pa.)',           dateTime: DateTime(2026, 2, 14), location: 'York, Pa.',            isHome: false, result: 'L 8-10'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'Christopher Newport University',dateTime: DateTime(2026, 2, 18), location: 'Newport News, Va.',    isHome: false, result: 'L 10-13'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'Ohio Northern University',     dateTime: DateTime(2026, 2, 21), location: 'Wilson Field',         isHome: true,  result: 'W 17-6'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'Denison University',           dateTime: DateTime(2026, 2, 28), location: 'Wilson Field',         isHome: true,  result: 'W 14-13 OT'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'Gettysburg College',           dateTime: DateTime(2026, 3, 7),  location: 'Gettysburg, Pa.',      isHome: false, result: 'L 9-11'),
+
+      // Women's Lacrosse — 5-2
+      SportingEvent(sport: "Women's Lacrosse", opponent: 'Franklin & Marshall',          dateTime: DateTime(2026, 2, 15), location: 'Wilson Field',              isHome: true,  result: 'L 6-7'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: 'Guilford',                     dateTime: DateTime(2026, 2, 17), location: 'Greensboro, N.C.',          isHome: false, result: 'W 24-1'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: 'University of Mary Washington',dateTime: DateTime(2026, 2, 25), location: 'Alston Parker Watt Field',  isHome: true,  result: 'W 10-7'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: 'Eastern Mennonite University', dateTime: DateTime(2026, 2, 28), location: 'Harrisonburg, Va.',         isHome: false, result: 'W 24-1'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: '#8 Salisbury',                 dateTime: DateTime(2026, 3, 1),  location: 'Alston Parker Watt Field',  isHome: true,  result: 'L 6-13'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: 'Christopher Newport',          dateTime: DateTime(2026, 3, 4),  location: 'Alston Parker Watt Field',  isHome: true,  result: 'W 15-9'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: 'Catholic',                     dateTime: DateTime(2026, 3, 7),  location: 'Alston Parker Watt Field',  isHome: true,  result: 'W 18-6'),
+    ];
+    results.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    return results;
+  }
+
+  static List<SportingEvent> getUpcomingEvents() {
+    final now = DateTime.now();
+    final allEvents = getAllEvents();
+    allEvents.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    return allEvents.where((event) => event.dateTime.isAfter(now)).take(20).toList();
+  }
+
+  static List<SportingEvent> getEventsBySport(String sport) {
+    return getAllEvents().where((event) => event.sport == sport).toList();
+  }
+
+  static List<String> getAllSports() {
+    final sports = getAllEvents().map((e) => e.sport).toSet().toList();
+    sports.sort();
+    return sports;
+  }
+}
