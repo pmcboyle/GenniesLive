@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Generals Move',
+      title: 'Gennies Live',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF000399),
@@ -151,7 +151,7 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'GENERALS MOVE',
+                    'GENNIES LIVE',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
@@ -756,6 +756,7 @@ class SchedulePage extends StatefulWidget {
 class _SchedulePageState extends State<SchedulePage> {
   late DateTime _selectedDate;
   late DateTime _weekStart;
+  bool _isMonthView = false;
 
   static const _dayAbbrevs = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   static const _monthNames = [
@@ -790,6 +791,58 @@ class _SchedulePageState extends State<SchedulePage> {
         e.dateTime.day == _selectedDate.day).toList();
   }
 
+  bool get _isViewingToday {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    return _selectedDate.year == today.year &&
+        _selectedDate.month == today.month &&
+        _selectedDate.day == today.day;
+  }
+
+  void _jumpToToday() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final dayOfWeek = now.weekday % 7;
+    setState(() {
+      _selectedDate = today;
+      _weekStart = today.subtract(Duration(days: dayOfWeek));
+    });
+  }
+
+  List<DateTime> get _monthDays {
+    final firstDayOfMonth = DateTime(_selectedDate.year, _selectedDate.month, 1);
+    final lastDayOfMonth = DateTime(_selectedDate.year, _selectedDate.month + 1, 0);
+    final startWeekday = firstDayOfMonth.weekday % 7; // 0 = Sunday
+    final totalDays = lastDayOfMonth.day;
+
+    final days = <DateTime>[];
+    // Add empty days for alignment
+    for (int i = 0; i < startWeekday; i++) {
+      days.add(DateTime(0)); // placeholder
+    }
+    // Add actual month days
+    for (int i = 1; i <= totalDays; i++) {
+      days.add(DateTime(_selectedDate.year, _selectedDate.month, i));
+    }
+    return days;
+  }
+
+  void _previousMonth() {
+    setState(() {
+      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1, 1);
+      final dayOfWeek = _selectedDate.weekday % 7;
+      _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
+    });
+  }
+
+  void _nextMonth() {
+    setState(() {
+      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1, 1);
+      final dayOfWeek = _selectedDate.weekday % 7;
+      _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final events = _filteredEvents;
@@ -810,7 +863,7 @@ class _SchedulePageState extends State<SchedulePage> {
               bottom: false,
               child: Column(
                 children: [
-                  // Title + nav arrows
+                  // Title + nav arrows + toggle button
                   Padding(
                     padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
                     child: Row(
@@ -818,36 +871,52 @@ class _SchedulePageState extends State<SchedulePage> {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.chevron_left, color: Colors.white),
-                          onPressed: () => setState(() =>
-                              _weekStart = _weekStart.subtract(const Duration(days: 7))),
+                          onPressed: _isMonthView
+                              ? _previousMonth
+                              : () => setState(() =>
+                                  _weekStart = _weekStart.subtract(const Duration(days: 7))),
                         ),
-                        Column(
-                          children: [
-                            Text(
-                              _monthNames[_weekDays[3].month],
-                              style: const TextStyle(
-                                color: Colors.white60,
-                                fontSize: 11,
-                                letterSpacing: 2,
-                                fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text(
+                                _isMonthView
+                                    ? _monthNames[_selectedDate.month]
+                                    : _monthNames[_weekDays[3].month],
+                                style: const TextStyle(
+                                  color: Colors.white60,
+                                  fontSize: 11,
+                                  letterSpacing: 2,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              'SCHEDULE',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 2,
+                              const SizedBox(height: 2),
+                              const Text(
+                                'SCHEDULE',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            _isMonthView ? Icons.view_week : Icons.calendar_month,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => setState(() => _isMonthView = !_isMonthView),
+                          tooltip: _isMonthView ? 'Week View' : 'Month View',
                         ),
                         IconButton(
                           icon: const Icon(Icons.chevron_right, color: Colors.white),
-                          onPressed: () => setState(() =>
-                              _weekStart = _weekStart.add(const Duration(days: 7))),
+                          onPressed: _isMonthView
+                              ? _nextMonth
+                              : () => setState(() =>
+                                  _weekStart = _weekStart.add(const Duration(days: 7))),
                         ),
                       ],
                     ),
@@ -872,27 +941,49 @@ class _SchedulePageState extends State<SchedulePage> {
                           .toList(),
                     ),
                   ),
-                  // Date cells
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
-                    child: Row(
-                      children: _weekDays.map((date) {
-                        final isSelected = date.day == _selectedDate.day &&
-                            date.month == _selectedDate.month &&
-                            date.year == _selectedDate.year;
-                        final hasEvents = _hasEventsOn(date);
-                        return Expanded(
-                          child: GestureDetector(
+                  // Date cells (week or month view)
+                  if (_isMonthView)
+                    // Month view grid
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7,
+                          childAspectRatio: 1.0,
+                          crossAxisSpacing: 2,
+                          mainAxisSpacing: 2,
+                        ),
+                        itemCount: _monthDays.length,
+                        itemBuilder: (context, index) {
+                          final date = _monthDays[index];
+                          if (date.year == 0) {
+                            // Empty placeholder
+                            return const SizedBox();
+                          }
+                          final isSelected = date.day == _selectedDate.day &&
+                              date.month == _selectedDate.month &&
+                              date.year == _selectedDate.year;
+                          final hasEvents = _hasEventsOn(date);
+                          final isToday = () {
+                            final now = DateTime.now();
+                            return date.day == now.day &&
+                                date.month == now.month &&
+                                date.year == now.year;
+                          }();
+                          return GestureDetector(
                             onTap: () => setState(() => _selectedDate = date),
                             child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 2),
-                              padding: const EdgeInsets.symmetric(vertical: 8),
                               decoration: BoxDecoration(
                                 color: isSelected ? Colors.white : Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(6),
+                                border: isToday && !isSelected
+                                    ? Border.all(color: Colors.white, width: 1.5)
+                                    : null,
                               ),
                               child: Column(
-                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     '${date.day}',
@@ -901,13 +992,13 @@ class _SchedulePageState extends State<SchedulePage> {
                                           ? const Color(0xFF000399)
                                           : Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: 13,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: 2),
                                   Container(
-                                    width: 5,
-                                    height: 5,
+                                    width: 4,
+                                    height: 4,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: hasEvents
@@ -920,11 +1011,64 @@ class _SchedulePageState extends State<SchedulePage> {
                                 ],
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                          );
+                        },
+                      ),
+                    )
+                  else
+                    // Week view row
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
+                      child: Row(
+                        children: _weekDays.map((date) {
+                          final isSelected = date.day == _selectedDate.day &&
+                              date.month == _selectedDate.month &&
+                              date.year == _selectedDate.year;
+                          final hasEvents = _hasEventsOn(date);
+                          return Expanded(
+                            child: GestureDetector(
+                              onTap: () => setState(() => _selectedDate = date),
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 2),
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? Colors.white : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      '${date.day}',
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? const Color(0xFF000399)
+                                            : Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Container(
+                                      width: 5,
+                                      height: 5,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: hasEvents
+                                            ? (isSelected
+                                                ? const Color(0xFF000399)
+                                                : Colors.white)
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -985,6 +1129,21 @@ class _SchedulePageState extends State<SchedulePage> {
           ),
         ],
       ),
+      floatingActionButton: _isViewingToday
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _jumpToToday,
+              backgroundColor: const Color(0xFF000399),
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.today),
+              label: const Text(
+                'TODAY',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
+                ),
+              ),
+            ),
     );
   }
 }
@@ -1233,7 +1392,7 @@ class _ScheduleEventTile extends StatelessWidget {
                   SizedBox(
                     width: 24,
                     child: Text(
-                      event.isHome ? 'VS' : '@',
+                      'VS',
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -1248,6 +1407,28 @@ class _ScheduleEventTile extends StatelessWidget {
                       style: const TextStyle(fontSize: 13, color: Colors.black87),
                     ),
                   ),
+                  // Home/Away badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: event.isHome ? Colors.blue[50] : Colors.green[50],
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: event.isHome ? Colors.blue[700]! : Colors.green[700]!,
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      event.isHome ? 'HOME' : 'AWAY',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                        color: event.isHome ? Colors.blue[700] : Colors.green[700],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Text(
                     event.formattedTime,
                     style: const TextStyle(fontSize: 11, color: Colors.grey),
@@ -1266,176 +1447,479 @@ class _ScheduleEventTile extends StatelessWidget {
 // ─────────────────────────────────────────────
 // WORKOUT CLASSES PAGE
 // ─────────────────────────────────────────────
-class WorkoutClassesPage extends StatelessWidget {
+class WorkoutClassesPage extends StatefulWidget {
   final bool showBackButton;
   const WorkoutClassesPage({super.key, this.showBackButton = true});
+
+  @override
+  State<WorkoutClassesPage> createState() => _WorkoutClassesPageState();
+}
+
+class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
+  late DateTime _selectedDate;
+  late DateTime _weekStart;
+  bool _isMonthView = false;
+
+  static const _dayAbbrevs = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  static const _monthNames = [
+    '', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _selectedDate = DateTime(now.year, now.month, now.day);
+    final dayOfWeek = now.weekday % 7;
+    _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
+  }
+
+  List<DateTime> get _weekDays =>
+      List.generate(7, (i) => _weekStart.add(Duration(days: i)));
+
+  List<DateTime> get _monthDays {
+    final firstDayOfMonth = DateTime(_selectedDate.year, _selectedDate.month, 1);
+    final lastDayOfMonth = DateTime(_selectedDate.year, _selectedDate.month + 1, 0);
+    final startWeekday = firstDayOfMonth.weekday % 7;
+    final totalDays = lastDayOfMonth.day;
+
+    final days = <DateTime>[];
+    for (int i = 0; i < startWeekday; i++) {
+      days.add(DateTime(0));
+    }
+    for (int i = 1; i <= totalDays; i++) {
+      days.add(DateTime(_selectedDate.year, _selectedDate.month, i));
+    }
+    return days;
+  }
+
+  void _previousMonth() {
+    setState(() {
+      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1, 1);
+      final dayOfWeek = _selectedDate.weekday % 7;
+      _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
+    });
+  }
+
+  void _nextMonth() {
+    setState(() {
+      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1, 1);
+      final dayOfWeek = _selectedDate.weekday % 7;
+      _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
+    });
+  }
 
   static const List<Map<String, dynamic>> _schedule = [
     {
       'day': 'Sunday',
       'classes': [
-        {'time': '1:00 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '1:00 PM - 4:00 PM', 'name': 'Open Swim', 'type': 'swim'},
       ],
     },
     {
       'day': 'Monday',
       'classes': [
-        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
         {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '12:30 PM - 2:30 PM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness'},
-        {'time': '7:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '7:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
       ],
     },
     {
       'day': 'Tuesday',
       'classes': [
-        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '11:00 AM - 1:00 PM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '12:00 PM', 'name': 'Open Dancing', 'type': 'fitness'},
         {'time': '5:30 PM', 'name': 'Pilates', 'type': 'fitness'},
-        {'time': '6:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
       ],
     },
     {
       'day': 'Wednesday',
       'classes': [
-        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
         {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '12:30 PM - 2:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '4:30 PM - 6:30 PM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '6:00 PM', 'name': 'Tone45', 'type': 'fitness'},
-        {'time': '7:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
       ],
     },
     {
       'day': 'Thursday',
       'classes': [
-        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '11:00 AM - 1:00 PM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '4:30 PM - 6:30 PM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '5:30 PM', 'name': 'Tone45', 'type': 'fitness'},
-        {'time': '6:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
       ],
     },
     {
       'day': 'Friday',
       'classes': [
-        {'time': '6:00 AM', 'name': 'Morning Open Swim', 'type': 'swim'},
+        {'time': '11:00 AM - 2:00 PM', 'name': 'Open Swim', 'type': 'swim'},
         {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
         {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness'},
-        {'time': '5:30 PM', 'name': 'Open Swim', 'type': 'swim'},
       ],
     },
     {
       'day': 'Saturday',
       'classes': [
         {'time': '10:00 AM', 'name': 'Spin', 'type': 'fitness'},
-        {'time': '5:00 PM', 'name': 'Open Swim', 'type': 'swim'},
       ],
     },
   ];
 
+  List<Map<String, dynamic>> _getClassesForDay(DateTime date) {
+    final dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    final dayName = dayNames[date.weekday % 7];
+    final dayData = _schedule.firstWhere((d) => d['day'] == dayName);
+    return (dayData['classes'] as List).cast<Map<String, dynamic>>();
+  }
+
+  bool get _isViewingToday {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    return _selectedDate.year == today.year &&
+        _selectedDate.month == today.month &&
+        _selectedDate.day == today.day;
+  }
+
+  void _jumpToToday() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final dayOfWeek = now.weekday % 7;
+    setState(() {
+      _selectedDate = today;
+      _weekStart = today.subtract(Duration(days: dayOfWeek));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final todayClasses = _getClassesForDay(_selectedDate);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Workout Classes'),
-        leading: showBackButton
-            ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context))
-            : null,
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _schedule.length,
-        itemBuilder: (context, index) {
-          final dayData = _schedule[index];
-          final classes = dayData['classes'] as List<Map<String, dynamic>>;
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: ExpansionTile(
-              initiallyExpanded: true,
-              leading: CircleAvatar(
-                backgroundColor: const Color(0xFF000399),
-                child: Text(
-                  (dayData['day'] as String).substring(0, 2),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: Column(
+        children: [
+          // Calendar header
+          Container(
+            color: const Color(0xFF000399),
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  // Title + nav arrows + toggle button
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left, color: Colors.white),
+                          onPressed: _isMonthView
+                              ? _previousMonth
+                              : () => setState(() =>
+                                  _weekStart = _weekStart.subtract(const Duration(days: 7))),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text(
+                                _isMonthView
+                                    ? _monthNames[_selectedDate.month]
+                                    : _monthNames[_weekDays[3].month],
+                                style: const TextStyle(
+                                  color: Colors.white60,
+                                  fontSize: 11,
+                                  letterSpacing: 2,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              const Text(
+                                'GROUPEX',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            _isMonthView ? Icons.view_week : Icons.calendar_month,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => setState(() => _isMonthView = !_isMonthView),
+                          tooltip: _isMonthView ? 'Week View' : 'Month View',
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right, color: Colors.white),
+                          onPressed: _isMonthView
+                              ? _nextMonth
+                              : () => setState(() =>
+                                  _weekStart = _weekStart.add(const Duration(days: 7))),
+                        ),
+                      ],
+                    ),
                   ),
+                  // Day abbreviations
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: _dayAbbrevs
+                          .map((d) => Expanded(
+                                child: Center(
+                                  child: Text(
+                                    d,
+                                    style: const TextStyle(
+                                      color: Colors.white54,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                  // Date cells (week or month view)
+                  if (_isMonthView)
+                    // Month view grid
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7,
+                          childAspectRatio: 1.0,
+                          crossAxisSpacing: 2,
+                          mainAxisSpacing: 2,
+                        ),
+                        itemCount: _monthDays.length,
+                        itemBuilder: (context, index) {
+                          final date = _monthDays[index];
+                          if (date.year == 0) {
+                            return const SizedBox();
+                          }
+                          final isSelected = date.day == _selectedDate.day &&
+                              date.month == _selectedDate.month &&
+                              date.year == _selectedDate.year;
+                          final isToday = () {
+                            final now = DateTime.now();
+                            return date.day == now.day &&
+                                date.month == now.month &&
+                                date.year == now.year;
+                          }();
+                          return GestureDetector(
+                            onTap: () => setState(() => _selectedDate = date),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: isSelected ? Colors.white : Colors.transparent,
+                                borderRadius: BorderRadius.circular(6),
+                                border: isToday && !isSelected
+                                    ? Border.all(color: Colors.white, width: 1.5)
+                                    : null,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${date.day}',
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? const Color(0xFF000399)
+                                        : Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  else
+                    // Week view row
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
+                      child: Row(
+                        children: _weekDays.map((date) {
+                          final isSelected = date.day == _selectedDate.day &&
+                              date.month == _selectedDate.month &&
+                              date.year == _selectedDate.year;
+                          return Expanded(
+                            child: GestureDetector(
+                              onTap: () => setState(() => _selectedDate = date),
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 2),
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? Colors.white : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${date.day}',
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? const Color(0xFF000399)
+                                          : Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+
+          // Date banner
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            color: const Color(0xFF00024A),
+            child: Text(
+              '${_monthNames[_selectedDate.month]} ${_selectedDate.day}, ${_selectedDate.year}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+
+          // Classes list
+          Expanded(
+            child: todayClasses.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No classes scheduled for this day.',
+                      style: TextStyle(color: Colors.grey, fontSize: 15),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: todayClasses.length,
+                    itemBuilder: (context, index) {
+                      final cls = todayClasses[index];
+                      final isSwim = cls['type'] == 'swim';
+                      final isOpenSwim = (cls['name'] as String).contains('Open Swim');
+
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: isSwim ? Colors.blue[50] : const Color(0xFFEEEEFF),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  isSwim ? Icons.pool : Icons.fitness_center,
+                                  color: isSwim ? Colors.blue[700] : const Color(0xFF000399),
+                                  size: 28,
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      cls['name'] as String,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      cls['time'] as String,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (!isOpenSwim)
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF000399),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  ),
+                                  onPressed: () => _showClassSignUpDialog(
+                                    context,
+                                    cls['name'] as String,
+                                    cls['time'] as String,
+                                  ),
+                                  child: const Text('Sign Up'),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: _isViewingToday
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _jumpToToday,
+              backgroundColor: const Color(0xFF000399),
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.today),
+              label: const Text(
+                'TODAY',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
                 ),
               ),
-              title: Text(
-                dayData['day'] as String,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text('${classes.length} classes'),
-              children: classes.map((cls) {
-                final isSwim = cls['type'] == 'swim';
-                final isOpenSwim = (cls['name'] as String).contains('Open Swim');
-                return ListTile(
-                  dense: true,
-                  leading: Icon(
-                    isSwim ? Icons.pool : Icons.fitness_center,
-                    size: 18,
-                    color: isSwim ? Colors.blue[700] : const Color(0xFF000399),
-                  ),
-                  title: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: isSwim ? Colors.blue[50] : const Color(0xFFEEEEFF),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          cls['time'] as String,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: isSwim ? Colors.blue[700] : const Color(0xFF000399),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Flexible(child: Text(cls['name'] as String, style: const TextStyle(fontSize: 14))),
-                    ],
-                  ),
-                  trailing: isOpenSwim
-                      ? null
-                      : SizedBox(
-                          width: 72,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF000399),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                              textStyle: const TextStyle(fontSize: 11),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                            onPressed: () => _showClassSignUpDialog(
-                              context,
-                              cls['name'] as String,
-                              dayData['day'] as String,
-                              cls['time'] as String,
-                            ),
-                            child: const Text('Sign Up'),
-                          ),
-                        ),
-                );
-              }).toList(),
             ),
-          );
-        },
-      ),
     );
   }
 
-  void _showClassSignUpDialog(BuildContext context, String className, String day, String time) {
+  void _showClassSignUpDialog(BuildContext context, String className, String time) {
     final nameController = TextEditingController();
     final emailController = TextEditingController();
+    final dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    final dayName = dayNames[_selectedDate.weekday % 7];
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -1444,7 +1928,7 @@ class WorkoutClassesPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('$day at $time', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+            Text('$dayName at $time', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
             const SizedBox(height: 12),
             TextField(
               controller: nameController,
@@ -1472,7 +1956,7 @@ class WorkoutClassesPage extends StatelessWidget {
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Signed up for $className on $day at $time!'),
+                  content: Text('Signed up for $className on $dayName at $time!'),
                   backgroundColor: const Color(0xFF000399),
                 ),
               );
@@ -2239,11 +2723,11 @@ class _ResultsPageState extends State<ResultsPage> with SingleTickerProviderStat
 
   static const List<String> _sports = [
     'All',
-    "Women's Basketball",
-    "Men's Basketball",
     'Baseball',
     "Men's Lacrosse",
     "Women's Lacrosse",
+    "Men's Tennis",
+    "Women's Tennis",
   ];
 
   @override
@@ -2279,6 +2763,14 @@ class _ResultsPageState extends State<ResultsPage> with SingleTickerProviderStat
           final results = sport == 'All'
               ? EventsData.getResults()
               : EventsData.getResults().where((e) => e.sport == sport).toList();
+
+          // Sort: reverse chronological for "All", chronological for individual sports
+          if (sport == 'All') {
+            results.sort((a, b) => b.dateTime.compareTo(a.dateTime)); // Newest first
+          } else {
+            results.sort((a, b) => a.dateTime.compareTo(b.dateTime)); // Oldest first
+          }
+
           return _buildResultsList(results);
         }).toList(),
       ),
