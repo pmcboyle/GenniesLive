@@ -1132,6 +1132,7 @@ class _SchedulePageState extends State<SchedulePage> {
       floatingActionButton: _isViewingToday
           ? null
           : FloatingActionButton.extended(
+              heroTag: 'schedule_today_button',
               onPressed: _jumpToToday,
               backgroundColor: const Color(0xFF000399),
               foregroundColor: Colors.white,
@@ -1514,67 +1515,67 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
     {
       'day': 'Sunday',
       'classes': [
-        {'time': '1:00 PM - 4:00 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '1:00 PM - 4:00 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
       ],
     },
     {
       'day': 'Monday',
       'classes': [
-        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
-        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
-        {'time': '12:30 PM - 2:30 PM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness'},
-        {'time': '7:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness', 'location': 'Room 231'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness', 'location': 'Room 245'},
+        {'time': '12:30 PM - 2:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness', 'location': 'Room 250'},
+        {'time': '7:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
       ],
     },
     {
       'day': 'Tuesday',
       'classes': [
-        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
-        {'time': '11:00 AM - 1:00 PM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '12:00 PM', 'name': 'Open Dancing', 'type': 'fitness'},
-        {'time': '5:30 PM', 'name': 'Pilates', 'type': 'fitness'},
-        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness', 'location': 'Room 231'},
+        {'time': '11:00 AM - 1:00 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '12:00 PM', 'name': 'Open Dancing', 'type': 'fitness', 'location': 'Room 245'},
+        {'time': '5:30 PM', 'name': 'Pilates', 'type': 'fitness', 'location': 'Room 231'},
+        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
       ],
     },
     {
       'day': 'Wednesday',
       'classes': [
-        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
-        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
-        {'time': '12:30 PM - 2:30 PM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '4:30 PM - 6:30 PM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '6:00 PM', 'name': 'Tone45', 'type': 'fitness'},
-        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness', 'location': 'Room 231'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness', 'location': 'Room 245'},
+        {'time': '12:30 PM - 2:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '4:30 PM - 6:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '6:00 PM', 'name': 'Tone45', 'type': 'fitness', 'location': 'Room 245'},
+        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
       ],
     },
     {
       'day': 'Thursday',
       'classes': [
-        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
-        {'time': '11:00 AM - 1:00 PM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
-        {'time': '4:30 PM - 6:30 PM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '5:30 PM', 'name': 'Tone45', 'type': 'fitness'},
-        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness', 'location': 'Room 231'},
+        {'time': '11:00 AM - 1:00 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness', 'location': 'Room 245'},
+        {'time': '4:30 PM - 6:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '5:30 PM', 'name': 'Tone45', 'type': 'fitness', 'location': 'Room 245'},
+        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
       ],
     },
     {
       'day': 'Friday',
       'classes': [
-        {'time': '11:00 AM - 2:00 PM', 'name': 'Open Swim', 'type': 'swim'},
-        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
-        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness'},
+        {'time': '11:00 AM - 2:00 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness', 'location': 'Room 245'},
+        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness', 'location': 'Room 250'},
       ],
     },
     {
       'day': 'Saturday',
       'classes': [
-        {'time': '10:00 AM', 'name': 'Spin', 'type': 'fitness'},
+        {'time': '10:00 AM', 'name': 'Spin', 'type': 'fitness', 'location': 'Room 250'},
       ],
     },
   ];
@@ -1869,6 +1870,28 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
                                         color: Colors.grey[600],
                                       ),
                                     ),
+                                    if (cls['location'] != null && cls['type'] == 'fitness')
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 2),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.location_on,
+                                              size: 14,
+                                              color: Colors.grey[500],
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              cls['location'] as String,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey[600],
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),
@@ -1899,6 +1922,7 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
       floatingActionButton: _isViewingToday
           ? null
           : FloatingActionButton.extended(
+              heroTag: 'groupex_today_button',
               onPressed: _jumpToToday,
               backgroundColor: const Color(0xFF000399),
               foregroundColor: Colors.white,
@@ -1970,6 +1994,325 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
 }
 
 // ─────────────────────────────────────────────
+// DARC OCCUPANCY PAGE
+// ─────────────────────────────────────────────
+class DarcOccupancyPage extends StatelessWidget {
+  const DarcOccupancyPage({super.key});
+
+  static const List<(String, double)> _weekdaySlots = [
+    ('6 AM',  0.10),
+    ('7 AM',  0.15),
+    ('8 AM',  0.25),
+    ('9 AM',  0.35),
+    ('10 AM', 0.45),
+    ('11 AM', 0.65),
+    ('12 PM', 0.85),
+    ('1 PM',  0.75),
+    ('2 PM',  0.55),
+    ('3 PM',  0.60),
+    ('4 PM',  0.75),
+    ('5 PM',  0.88),
+    ('6 PM',  0.95),
+    ('7 PM',  0.70),
+    ('8 PM',  0.45),
+    ('9 PM',  0.30),
+    ('10 PM', 0.15),
+  ];
+
+  static const List<(String, double)> _weekendSlots = [
+    ('8 AM',  0.10),
+    ('9 AM',  0.20),
+    ('10 AM', 0.38),
+    ('11 AM', 0.52),
+    ('12 PM', 0.65),
+    ('1 PM',  0.62),
+    ('2 PM',  0.58),
+    ('3 PM',  0.45),
+    ('4 PM',  0.30),
+    ('5 PM',  0.22),
+    ('6 PM',  0.15),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final isWeekend = now.weekday == DateTime.saturday || now.weekday == DateTime.sunday;
+    final currentSlots = isWeekend ? _weekendSlots : _weekdaySlots;
+
+    // Find current occupancy based on time
+    final currentHour = now.hour;
+    String currentOccupancyLabel = 'N/A';
+    double currentOccupancyValue = 0.0;
+
+    for (final slot in currentSlots) {
+      final slotHour = _parseHour(slot.$1);
+      if (slotHour == currentHour) {
+        currentOccupancyValue = slot.$2;
+        if (currentOccupancyValue < 0.35) {
+          currentOccupancyLabel = 'Light';
+        } else if (currentOccupancyValue < 0.70) {
+          currentOccupancyLabel = 'Moderate';
+        } else {
+          currentOccupancyLabel = 'Busy';
+        }
+        break;
+      }
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('DARC Fitness Center Occupancy'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Current occupancy card
+          Card(
+            elevation: 3,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF000399), Color(0xFF1A237E)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const Text(
+                    'Current Occupancy',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '${(currentOccupancyValue * 100).toInt()}%',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      currentOccupancyLabel,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Updated ${_formatTime(now)}',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Predicted busy times card
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.bar_chart, color: Color(0xFF000399)),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Predicted Busy Times',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              'Typical patterns for today',
+                              style: TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    isWeekend ? 'Typical Weekend' : 'Typical Weekday',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 12),
+                  ...currentSlots.map((s) => _buildOccupancyRow(s.$1, s.$2, currentHour)),
+                  const SizedBox(height: 16),
+                  const Row(
+                    children: [
+                      _OccupancyLegendDot(color: Colors.green, label: 'Light (0-35%)'),
+                      SizedBox(width: 12),
+                      _OccupancyLegendDot(color: Colors.orange, label: 'Moderate (35-70%)'),
+                      SizedBox(width: 12),
+                      _OccupancyLegendDot(color: Colors.red, label: 'Busy (70%+)'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  int _parseHour(String timeStr) {
+    final hourStr = timeStr.replaceAll(RegExp(r'[^0-9]'), '');
+    int hour = int.parse(hourStr);
+    if (timeStr.contains('PM') && hour != 12) {
+      hour += 12;
+    } else if (timeStr.contains('AM') && hour == 12) {
+      hour = 0;
+    }
+    return hour;
+  }
+
+  String _formatTime(DateTime time) {
+    final hour = time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
+    final period = time.hour >= 12 ? 'PM' : 'AM';
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute $period';
+  }
+
+  Widget _buildOccupancyRow(String time, double occupancy, int currentHour) {
+    final slotHour = _parseHour(time);
+    final isCurrent = slotHour == currentHour;
+
+    final Color color;
+    final String label;
+    if (occupancy < 0.35) {
+      color = Colors.green;
+      label = 'Light';
+    } else if (occupancy < 0.70) {
+      color = Colors.orange;
+      label = 'Moderate';
+    } else {
+      color = Colors.red;
+      label = 'Busy';
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isCurrent ? const Color(0xFF000399).withValues(alpha: 0.05) : null,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+      margin: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 60,
+            child: Row(
+              children: [
+                Text(
+                  time,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+                if (isCurrent)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 4),
+                    child: Icon(Icons.circle, size: 8, color: Color(0xFF000399)),
+                  ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: occupancy,
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation<Color>(color),
+                minHeight: 18,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          SizedBox(
+            width: 70,
+            child: Row(
+              children: [
+                Text(
+                  '${(occupancy * 100).toInt()}%',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OccupancyLegendDot extends StatelessWidget {
+  final Color color;
+  final String label;
+  const _OccupancyLegendDot({required this.color, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 4),
+        Text(label, style: const TextStyle(fontSize: 10)),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
 // FACILITY HOURS PAGE
 // ─────────────────────────────────────────────
 class FacilityHoursPage extends StatelessWidget {
@@ -1989,12 +2332,12 @@ class FacilityHoursPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: const [
           _DuchossoisHoursCard(),
-          _HoursCard(facility: 'Natatorium', hours: 'Mon–Fri: 6:30 AM – 9:00 PM\nSat–Sun: 10:00 AM – 6:00 PM'),
-          _HoursCard(facility: 'Fitness Center', hours: 'Mon–Fri: 5:30 AM – 11:00 PM\nSat–Sun: 7:00 AM – 10:00 PM'),
-          _HoursCard(facility: 'Outdoor Track', hours: 'Daily: 6:00 AM – 9:00 PM'),
-          _HoursCard(facility: 'Wilson Field', hours: 'Daily: 6:00 AM – Dark'),
-          _HoursCard(facility: 'Captain Dick Smith Baseball Field', hours: 'Daily: 6:00 AM – Dark'),
-          _HoursCard(facility: 'Fuge Field', hours: 'Daily: Dawn – Dusk'),
+          _HoursCard(facility: 'Natatorium', hours: 'Mon–Thu: 6:00 AM – 9:30 PM\nFri: 11:00 AM – 2:00 PM\nSat: Closed\nSun: 1:00 PM – 4:00 PM'),
+          _HoursCard(facility: 'Fitness Center', hours: 'Mon–Thu: 6:00 AM – 10:00 PM\nFri: 6:00 AM – 8:00 PM\nSat: 9:00 AM – 8:00 PM\nSun: 11:00 AM – 10:00 PM'),
+          _HoursCard(facility: 'Outdoor Track', hours: 'Daily: 6:00 AM – 9:00 PM\n(Weather permitting)'),
+          _HoursCard(facility: 'Wilson Field', hours: 'Daily: 6:00 AM – Dark\n(Weather permitting)'),
+          _HoursCard(facility: 'Captain Dick Smith Baseball Field', hours: 'Daily: 6:00 AM – Dark\n(Weather permitting)'),
+          _HoursCard(facility: 'Fuge Field', hours: 'Daily: Dawn – Dusk\n(Weather permitting)'),
         ],
       ),
     );
@@ -2035,7 +2378,8 @@ class _DuchossoisHoursCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ExpansionTile(
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: const CircleAvatar(
           backgroundColor: Color(0xFF000399),
           child: Icon(Icons.access_time, color: Colors.white),
@@ -2045,31 +2389,9 @@ class _DuchossoisHoursCard extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: const Text(
-          'Mon–Fri: 6:00 AM – 11:00 PM\nSat–Sun: 8:00 AM – 10:00 PM',
+          'Mon–Fri: 5:30 AM – 11:00 PM\nSat–Sun: 8:00 AM – 10:00 PM',
         ),
-        trailing: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'click for\nbusy hours',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 9,
-                color: Color(0xFF000399),
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            Icon(Icons.expand_more, size: 18, color: Colors.grey),
-          ],
-        ),
-        children: const [
-          Divider(height: 1),
-          Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: _BusyHoursCard(),
-          ),
-        ],
+        isThreeLine: true,
       ),
     );
   }
@@ -2527,6 +2849,153 @@ class ClubSportsPage extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
+// VARSITY LIFT SCHEDULE PAGE
+// ─────────────────────────────────────────────
+class VarsityLiftSchedulePage extends StatelessWidget {
+  const VarsityLiftSchedulePage({super.key});
+
+  static const Map<String, List<Map<String, String>>> _liftSchedule = {
+    'Monday': [
+      {'time': '6:00 AM - 7:30 AM', 'sport': 'Football'},
+      {'time': '7:30 AM - 9:00 AM', 'sport': 'Men\'s Basketball'},
+      {'time': '3:00 PM - 4:30 PM', 'sport': 'Women\'s Soccer'},
+      {'time': '4:30 PM - 6:00 PM', 'sport': 'Baseball'},
+    ],
+    'Tuesday': [
+      {'time': '6:00 AM - 7:30 AM', 'sport': 'Women\'s Basketball'},
+      {'time': '7:30 AM - 9:00 AM', 'sport': 'Men\'s Lacrosse'},
+      {'time': '3:00 PM - 4:30 PM', 'sport': 'Women\'s Lacrosse'},
+      {'time': '4:30 PM - 6:00 PM', 'sport': 'Track & Field'},
+    ],
+    'Wednesday': [
+      {'time': '6:00 AM - 7:30 AM', 'sport': 'Football'},
+      {'time': '7:30 AM - 9:00 AM', 'sport': 'Men\'s Basketball'},
+      {'time': '3:00 PM - 4:30 PM', 'sport': 'Women\'s Soccer'},
+      {'time': '4:30 PM - 6:00 PM', 'sport': 'Baseball'},
+    ],
+    'Thursday': [
+      {'time': '6:00 AM - 7:30 AM', 'sport': 'Women\'s Basketball'},
+      {'time': '7:30 AM - 9:00 AM', 'sport': 'Men\'s Lacrosse'},
+      {'time': '3:00 PM - 4:30 PM', 'sport': 'Women\'s Lacrosse'},
+      {'time': '4:30 PM - 6:00 PM', 'sport': 'Track & Field'},
+    ],
+    'Friday': [
+      {'time': '6:00 AM - 7:30 AM', 'sport': 'Football'},
+      {'time': '7:30 AM - 9:00 AM', 'sport': 'Mixed Sports'},
+      {'time': '3:00 PM - 4:30 PM', 'sport': 'Open Lift'},
+    ],
+    'Saturday': [
+      {'time': '8:00 AM - 10:00 AM', 'sport': 'Open Lift'},
+      {'time': '10:00 AM - 12:00 PM', 'sport': 'Team Training'},
+    ],
+    'Sunday': [
+      {'time': '1:00 PM - 4:00 PM', 'sport': 'Open Lift'},
+    ],
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Varsity Lift Schedule'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF000399).withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Weight Room Schedule',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Varsity athletes can use the weight room during their team\'s designated times.',
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          ..._liftSchedule.entries.map((entry) {
+            final day = entry.key;
+            final slots = entry.value;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8, top: 12),
+                  child: Text(
+                    day.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                      color: Color(0xFF000399),
+                    ),
+                  ),
+                ),
+                ...slots.map((slot) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.fitness_center,
+                          color: const Color(0xFF000399),
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                slot['sport']!,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                slot['time']!,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
 // CAMPUS MAP PAGE
 // ─────────────────────────────────────────────
 class CampusMapPage extends StatelessWidget {
@@ -2873,14 +3342,6 @@ class _MoreMenuPage extends StatelessWidget {
             ),
           ),
           _NavCard(
-            title: 'Workout Classes',
-            description: 'Weekly GroupEx schedule — yoga, TRX, spin, pilates, open swim & more.',
-            icon: Icons.fitness_center,
-            color: const Color(0xFF000399),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkoutClassesPage())),
-          ),
-          const SizedBox(height: 12),
-          _NavCard(
             title: 'Facility Hours',
             description: 'Operating hours for the Duchossois Center, Natatorium, fields & more.',
             icon: Icons.schedule,
@@ -2889,11 +3350,27 @@ class _MoreMenuPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _NavCard(
+            title: 'DARC Fitness Center Occupancy',
+            description: 'Real-time occupancy levels for Duchossois Fitness Center throughout the day.',
+            icon: Icons.bar_chart,
+            color: const Color(0xFF6A1B9A),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DarcOccupancyPage())),
+          ),
+          const SizedBox(height: 12),
+          _NavCard(
             title: 'Campus Map',
             description: 'Interactive map of W&L — find sporting facilities, fields & venues.',
             icon: Icons.map,
             color: const Color(0xFF1B5E20),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CampusMapPage())),
+          ),
+          const SizedBox(height: 12),
+          _NavCard(
+            title: 'Varsity Lift Schedule',
+            description: 'Weight room and strength training schedule for varsity athletes.',
+            icon: Icons.fitness_center,
+            color: const Color(0xFF000399),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VarsityLiftSchedulePage())),
           ),
           // ── SPORTS ──
           const Padding(
