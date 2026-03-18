@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Gennies Live',
+      title: 'Generals Move',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF000399),
@@ -184,89 +184,22 @@ class HomePage extends StatelessWidget {
             ),
           ),
 
+          // ── Featured hero story ──
+          const SliverToBoxAdapter(child: _HeroNewsCard()),
+
+          // ── News grid ──
+          const SliverToBoxAdapter(child: _NewsGrid()),
+
+          // ── Next Up section ──
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Section label ──
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      'EXPLORE',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-
-                  // ── Navigation cards ──
-                  _NavCard(
-                    title: 'Workout Classes',
-                    description: 'Weekly fitness class schedule — yoga, TRX, spin, pilates, open swim & more.',
-                    icon: Icons.fitness_center,
-                    color: const Color(0xFF000399),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const WorkoutClassesPage()),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _NavCard(
-                    title: 'Facility Hours',
-                    description: 'Operating hours for Warner Center, Natatorium, Fitness Center & more.',
-                    icon: Icons.schedule,
-                    color: const Color(0xFF1A237E),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const FacilityHoursPage()),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _NavCard(
-                    title: 'Varsity Sports',
-                    description: 'Game schedules, upcoming events & results for all Generals sports.',
-                    icon: Icons.emoji_events,
-                    color: const Color(0xFF283593),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const VarsitySportsPage()),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _NavCard(
-                    title: 'Club Sports',
-                    description: 'Browse and sign up for student-run club sports at Washington & Lee.',
-                    icon: Icons.groups,
-                    color: const Color(0xFF0D47A1),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ClubSportsPage()),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _NavCard(
-                    title: 'Campus Map',
-                    description: 'Interactive map of W&L — find sporting facilities, fields & venues.',
-                    icon: Icons.map,
-                    color: const Color(0xFF1B5E20),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const CampusMapPage()),
-                    ),
-                  ),
-
-                  // ── Photo gallery ──
-                  const _PhotoGallerySection(),
-
-                  // ── Next Up section ──
                   if (nextEvents.isNotEmpty) ...[
                     const Padding(
-                      padding: EdgeInsets.only(top: 28, bottom: 12),
+                      padding: EdgeInsets.only(top: 8, bottom: 12),
                       child: Text(
                         'NEXT UP',
                         style: TextStyle(
@@ -279,7 +212,6 @@ class HomePage extends StatelessWidget {
                     ),
                     ...nextEvents.map((e) => _UpcomingEventTile(event: e)),
                   ],
-
                   const SizedBox(height: 24),
                 ],
               ),
@@ -383,6 +315,329 @@ class _PhotoGallerySection extends StatelessWidget {
   }
 }
 
+
+// ── News / Highlights data ──
+class _NewsItem {
+  final String headline;
+  final String sport;
+  final String sportTag;
+  final String timeAgo;
+  final String asset;
+  final Color tagColor;
+
+  const _NewsItem({
+    required this.headline,
+    required this.sport,
+    required this.sportTag,
+    required this.timeAgo,
+    required this.asset,
+    required this.tagColor,
+  });
+}
+
+const List<_NewsItem> _newsItems = [
+  _NewsItem(
+    headline: "Women's Basketball Wins ODAC Championship & Advances to NCAA Round 2",
+    sport: "Women's Basketball",
+    sportTag: 'WBB',
+    timeAgo: '2 days ago',
+    asset: 'assets/images/wbb_allregion.png',
+    tagColor: Color(0xFF000399),
+  ),
+  _NewsItem(
+    headline: "Women's Lacrosse Opens 5-2, Van Son Earns ODAC Weekly Honors",
+    sport: "Women's Lacrosse",
+    sportTag: 'WLAX',
+    timeAgo: '3 days ago',
+    asset: 'assets/images/womens_lacrosse.png',
+    tagColor: Color(0xFF1565C0),
+  ),
+  _NewsItem(
+    headline: "Men's Lacrosse Wins Overtime Thriller 14-13 vs Denison",
+    sport: "Men's Lacrosse",
+    sportTag: 'MLAX',
+    timeAgo: '2 weeks ago',
+    asset: 'assets/images/mens_lacrosse.webp',
+    tagColor: Color(0xFF283593),
+  ),
+  _NewsItem(
+    headline: "Baseball Opens Spring 6-3-1 in Non-Conference Play",
+    sport: 'Baseball',
+    sportTag: 'BASE',
+    timeAgo: '1 week ago',
+    asset: 'assets/images/baseball.webp',
+    tagColor: Color(0xFF1B5E20),
+  ),
+  _NewsItem(
+    headline: "Wrestling Team Earns Multiple All-ODAC Honors",
+    sport: 'Wrestling',
+    sportTag: 'WRES',
+    timeAgo: '3 weeks ago',
+    asset: 'assets/images/wrestling.webp',
+    tagColor: Color(0xFF4A148C),
+  ),
+  _NewsItem(
+    headline: "Volleyball Named to All-ODAC First Team",
+    sport: 'Volleyball',
+    sportTag: 'VB',
+    timeAgo: '1 month ago',
+    asset: 'assets/images/volleyball.webp',
+    tagColor: Color(0xFF880E4F),
+  ),
+];
+
+// ── Hero featured story ──
+class _HeroNewsCard extends StatelessWidget {
+  const _HeroNewsCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => launchUrl(
+        Uri.parse('https://generalssports.com/sports/mswim/2025-26'),
+        mode: LaunchMode.externalApplication,
+      ),
+      child: Stack(
+        children: [
+          // Photo
+          SizedBox(
+            width: double.infinity,
+            height: 220,
+            child: Image.asset(
+              'assets/images/swimming.webp',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                height: 220,
+                color: const Color(0xFF000399),
+              ),
+            ),
+          ),
+          // Dark gradient overlay
+          Container(
+            height: 220,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black87],
+              ),
+            ),
+          ),
+          // Text overlay
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF000399),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      'CHAMPIONSHIP PREVIEW',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'NATIONALS',
+                    style: TextStyle(
+                      color: Color(0xFF6699FF),
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      height: 1,
+                    ),
+                  ),
+                  const Text(
+                    'GENERALS SWIMMING',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Headline + sport tag below the hero
+class _HeroNewsCaption extends StatelessWidget {
+  const _HeroNewsCaption();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Men\'s Swimming Qualifies for DIII National Championships',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: Colors.black87,
+              height: 1.25,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              const Icon(Icons.pool, size: 13, color: Colors.grey),
+              const SizedBox(width: 4),
+              Text(
+                'MSWIM  •  Today',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Divider(height: 1),
+        ],
+      ),
+    );
+  }
+}
+
+// ── News grid (2-column) ──
+class _NewsGrid extends StatelessWidget {
+  const _NewsGrid();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _HeroNewsCaption(),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _newsItems.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 0.82,
+              ),
+              itemBuilder: (context, i) => _NewsCard(item: _newsItems[i]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NewsCard extends StatelessWidget {
+  final _NewsItem item;
+  const _NewsCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => launchUrl(
+        Uri.parse('https://generalssports.com'),
+        mode: LaunchMode.externalApplication,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Stack(
+          children: [
+            // Photo
+            Positioned.fill(
+              child: Image.asset(
+                item.asset,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  color: item.tagColor,
+                ),
+              ),
+            ),
+            // Gradient overlay
+            Positioned.fill(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black],
+                  ),
+                ),
+              ),
+            ),
+            // Text
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.headline,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        height: 1.3,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(
+                          _sportIcon(item.sport),
+                          size: 11,
+                          color: Colors.white70,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          '${item.sportTag}  •  ${item.timeAgo}',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 // ── Reusable nav card ──
 class _NavCard extends StatelessWidget {
@@ -2117,36 +2372,22 @@ class _MoreMenuPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // ── EXPLORE ──
           const Padding(
             padding: EdgeInsets.only(bottom: 12),
             child: Text(
-              'SPORTS',
+              'EXPLORE',
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.grey),
             ),
           ),
           _NavCard(
-            title: 'Varsity Sports',
-            description: 'Game schedules, upcoming events & results for all Generals sports.',
-            icon: Icons.emoji_events,
+            title: 'Workout Classes',
+            description: 'Weekly GroupEx schedule — yoga, TRX, spin, pilates, open swim & more.',
+            icon: Icons.fitness_center,
             color: const Color(0xFF000399),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VarsitySportsPage())),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WorkoutClassesPage())),
           ),
           const SizedBox(height: 12),
-          _NavCard(
-            title: 'Club Sports',
-            description: 'Browse and sign up for student-run club sports at Washington & Lee.',
-            icon: Icons.groups,
-            color: const Color(0xFF0D47A1),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClubSportsPage())),
-          ),
-          const SizedBox(height: 12),
-          const Padding(
-            padding: EdgeInsets.only(top: 24, bottom: 12),
-            child: Text(
-              'FACILITIES',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.grey),
-            ),
-          ),
           _NavCard(
             title: 'Facility Hours',
             description: 'Operating hours for the Duchossois Center, Natatorium, fields & more.',
@@ -2161,6 +2402,29 @@ class _MoreMenuPage extends StatelessWidget {
             icon: Icons.map,
             color: const Color(0xFF1B5E20),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CampusMapPage())),
+          ),
+          // ── SPORTS ──
+          const Padding(
+            padding: EdgeInsets.only(top: 24, bottom: 12),
+            child: Text(
+              'SPORTS',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.grey),
+            ),
+          ),
+          _NavCard(
+            title: 'Varsity Sports',
+            description: 'Game schedules, upcoming events & results for all Generals sports.',
+            icon: Icons.emoji_events,
+            color: const Color(0xFF283593),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VarsitySportsPage())),
+          ),
+          const SizedBox(height: 12),
+          _NavCard(
+            title: 'Club Sports',
+            description: 'Browse and sign up for student-run club sports at Washington & Lee.',
+            icon: Icons.groups,
+            color: const Color(0xFF0D47A1),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClubSportsPage())),
           ),
           const SizedBox(height: 24),
         ],
