@@ -973,7 +973,7 @@ class EventsData {
       SportingEvent(sport: "Men's Basketball", opponent: 'Virginia Wesleyan University', dateTime: DateTime(2026, 2, 14),  location: 'Virginia Beach, Va.', isHome: false, result: 'L 59-76'),
       SportingEvent(sport: "Men's Basketball", opponent: 'Bridgewater College',          dateTime: DateTime(2026, 2, 18),  location: 'Holekamp Gym',        isHome: true,  result: 'W 79-56'),
 
-      // Baseball — 6-3-1
+      // Baseball — 14-5-1
       SportingEvent(sport: 'Baseball', opponent: 'Piedmont University',        dateTime: DateTime(2026, 2, 20),       location: 'Kannapolis, N.C.',      isHome: false, result: 'W 7-5'),
       SportingEvent(sport: 'Baseball', opponent: 'Berry College',              dateTime: DateTime(2026, 2, 21),       location: 'Kannapolis, N.C.',      isHome: false, result: 'L 1-11'),
       SportingEvent(sport: 'Baseball', opponent: 'Swarthmore College',         dateTime: DateTime(2026, 2, 22),       location: 'Kannapolis, N.C.',      isHome: false, result: 'W 19-18'),
@@ -983,15 +983,30 @@ class EventsData {
       SportingEvent(sport: 'Baseball', opponent: 'Mary Baldwin University',    dateTime: DateTime(2026, 3, 3),        location: "Cap'n Dick Smith Field", isHome: true,  result: 'W 13-6'),
       SportingEvent(sport: 'Baseball', opponent: 'University of Lynchburg (G1)',dateTime: DateTime(2026, 3, 7, 11, 0),location: 'Lynchburg, Va.',        isHome: false, result: 'L 6-10'),
       SportingEvent(sport: 'Baseball', opponent: 'University of Lynchburg (G2)',dateTime: DateTime(2026, 3, 7, 14, 0),location: 'Lynchburg, Va.',        isHome: false, result: 'T 9-9 (10 inn.)'),
+      SportingEvent(sport: 'Baseball', opponent: 'Southern Virginia University', dateTime: DateTime(2026, 3, 11),       location: "Cap'n Dick Smith Field", isHome: true,  result: 'W 17-8'),
+      SportingEvent(sport: 'Baseball', opponent: 'Averett University (G1)',      dateTime: DateTime(2026, 3, 14, 12, 0),location: "Cap'n Dick Smith Field", isHome: true,  result: 'W 8-6'),
+      SportingEvent(sport: 'Baseball', opponent: 'Averett University (G2)',      dateTime: DateTime(2026, 3, 14, 15, 0),location: "Cap'n Dick Smith Field", isHome: true,  result: 'L 3-5'),
+      SportingEvent(sport: 'Baseball', opponent: 'Bridgewater College',          dateTime: DateTime(2026, 3, 18),       location: "Cap'n Dick Smith Field", isHome: true,  result: 'W 13-7'),
+      SportingEvent(sport: 'Baseball', opponent: 'Hampden-Sydney College (G1)',  dateTime: DateTime(2026, 3, 21, 12, 0),location: 'Hampden-Sydney, Va.',    isHome: false, result: 'W 20-1'),
+      SportingEvent(sport: 'Baseball', opponent: 'Hampden-Sydney College (G2)',  dateTime: DateTime(2026, 3, 21, 15, 0),location: 'Hampden-Sydney, Va.',    isHome: false, result: 'W 7-6'),
+      SportingEvent(sport: 'Baseball', opponent: 'Guilford College (G1)',        dateTime: DateTime(2026, 3, 28, 12, 0),location: "Cap'n Dick Smith Field", isHome: true,  result: 'L 4-5'),
+      SportingEvent(sport: 'Baseball', opponent: 'Guilford College (G2)',        dateTime: DateTime(2026, 3, 28, 15, 0),location: "Cap'n Dick Smith Field", isHome: true,  result: 'W 12-5'),
+      SportingEvent(sport: 'Baseball', opponent: 'Wilson College',               dateTime: DateTime(2026, 3, 30),       location: "Cap'n Dick Smith Field", isHome: true,  result: 'W 15-5'),
 
-      // Men's Lacrosse — 2-3
+      // Men's Lacrosse — 6-4
       SportingEvent(sport: "Men's Lacrosse", opponent: 'York College (Pa.)',           dateTime: DateTime(2026, 2, 14), location: 'York, Pa.',            isHome: false, result: 'L 8-10'),
       SportingEvent(sport: "Men's Lacrosse", opponent: 'Christopher Newport University',dateTime: DateTime(2026, 2, 18), location: 'Newport News, Va.',    isHome: false, result: 'L 10-13'),
       SportingEvent(sport: "Men's Lacrosse", opponent: 'Ohio Northern University',     dateTime: DateTime(2026, 2, 21), location: 'Wilson Field',         isHome: true,  result: 'W 17-6'),
       SportingEvent(sport: "Men's Lacrosse", opponent: 'Denison University',           dateTime: DateTime(2026, 2, 28), location: 'Wilson Field',         isHome: true,  result: 'W 14-13 OT'),
       SportingEvent(sport: "Men's Lacrosse", opponent: 'Gettysburg College',           dateTime: DateTime(2026, 3, 7),  location: 'Gettysburg, Pa.',      isHome: false, result: 'L 9-11'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'Stevenson University',         dateTime: DateTime(2026, 3, 13), location: 'Owings Mills, Md.',    isHome: false, result: 'W 16-12'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'RIT',                          dateTime: DateTime(2026, 3, 14), location: 'Owings Mills, Md.',    isHome: false, result: 'L 13-22'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'Roanoke College',              dateTime: DateTime(2026, 3, 18), location: 'Wilson Field',         isHome: true,  result: 'W 14-10'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'Virginia Wesleyan University', dateTime: DateTime(2026, 3, 21), location: 'Virginia Beach, Va.', isHome: false, result: 'W 24-5'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'Guilford College',             dateTime: DateTime(2026, 3, 25), location: 'Wilson Field',         isHome: true,  result: 'W 25-0'),
+      SportingEvent(sport: "Men's Lacrosse", opponent: 'Randolph-Macon College',       dateTime: DateTime(2026, 3, 28), location: 'Ashland, Va.',         isHome: false, result: 'L 8-10'),
 
-      // Women's Lacrosse — 5-2
+      // Women's Lacrosse — 9-2
       SportingEvent(sport: "Women's Lacrosse", opponent: 'Franklin & Marshall',          dateTime: DateTime(2026, 2, 15), location: 'Wilson Field',              isHome: true,  result: 'L 6-7'),
       SportingEvent(sport: "Women's Lacrosse", opponent: 'Guilford',                     dateTime: DateTime(2026, 2, 17), location: 'Greensboro, N.C.',          isHome: false, result: 'W 24-1'),
       SportingEvent(sport: "Women's Lacrosse", opponent: 'University of Mary Washington',dateTime: DateTime(2026, 2, 25), location: 'Alston Parker Watt Field',  isHome: true,  result: 'W 10-7'),
@@ -999,8 +1014,12 @@ class EventsData {
       SportingEvent(sport: "Women's Lacrosse", opponent: '#8 Salisbury',                 dateTime: DateTime(2026, 3, 1),  location: 'Alston Parker Watt Field',  isHome: true,  result: 'L 6-13'),
       SportingEvent(sport: "Women's Lacrosse", opponent: 'Christopher Newport',          dateTime: DateTime(2026, 3, 4),  location: 'Alston Parker Watt Field',  isHome: true,  result: 'W 15-9'),
       SportingEvent(sport: "Women's Lacrosse", opponent: 'Catholic',                     dateTime: DateTime(2026, 3, 7),  location: 'Alston Parker Watt Field',  isHome: true,  result: 'W 18-6'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: '#5 York (Pa.)',               dateTime: DateTime(2026, 3, 14), location: 'York, Pa.',                 isHome: false, result: 'W 13-12 OT'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: 'Randolph-Macon',              dateTime: DateTime(2026, 3, 18), location: 'Ashland, Va.',               isHome: false, result: 'W 13-9'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: '#7 Gettysburg',               dateTime: DateTime(2026, 3, 22), location: 'Alston Parker Watt Field',  isHome: true,  result: 'W 11-10'),
+      SportingEvent(sport: "Women's Lacrosse", opponent: 'Virginia Wesleyan',           dateTime: DateTime(2026, 3, 28), location: 'Alston Parker Watt Field',  isHome: true,  result: 'W 25-2'),
 
-      // Men's Tennis — 2-7
+      // Men's Tennis — 5-7
       SportingEvent(sport: "Men's Tennis", opponent: 'James Madison University',        dateTime: DateTime(2026, 2, 14), location: 'Harrisonburg, Va.',    isHome: false, result: 'L 1-6'),
       SportingEvent(sport: "Men's Tennis", opponent: 'Centre College',                  dateTime: DateTime(2026, 2, 21), location: 'Danville, Ky.',        isHome: false, result: 'W 5-2'),
       SportingEvent(sport: "Men's Tennis", opponent: 'Kenyon College',           dateTime: DateTime(2026, 2, 22), location: 'Danville, Ky.',        isHome: false, result: 'L 2-5'),
@@ -1010,15 +1029,23 @@ class EventsData {
       SportingEvent(sport: "Men's Tennis", opponent: 'Furman University',               dateTime: DateTime(2026, 3, 5),  location: 'Lexington, Va.',       isHome: true,  result: 'L 0-7'),
       SportingEvent(sport: "Men's Tennis", opponent: 'University of Mary Washington', dateTime: DateTime(2026, 3, 14), location: 'Lexington, Va.', isHome: true,  result: 'L 1-6'),
       SportingEvent(sport: "Men's Tennis", opponent: 'University of Lynchburg',         dateTime: DateTime(2026, 3, 17), location: 'Lynchburg, Va.',       isHome: false, result: 'W 5-2'),
+      SportingEvent(sport: "Men's Tennis", opponent: '#28 N.C. Wesleyan University',   dateTime: DateTime(2026, 3, 20), location: 'TBD',                  isHome: false, result: 'L 2-5'),
+      SportingEvent(sport: "Men's Tennis", opponent: '#17 Carnegie Mellon University', dateTime: DateTime(2026, 3, 22), location: 'TBD',                  isHome: false, result: 'L 0-7'),
+      SportingEvent(sport: "Men's Tennis", opponent: 'Randolph College',               dateTime: DateTime(2026, 3, 25), location: 'Lynchburg, Va.',       isHome: false, result: 'W 5-2'),
+      SportingEvent(sport: "Men's Tennis", opponent: 'Averett University',             dateTime: DateTime(2026, 3, 28), location: 'Danville, Va.',        isHome: false, result: 'W 5-2'),
 
-      // Women's Tennis — 9-0
+      // Women's Tennis — 9-1
       SportingEvent(sport: "Women's Tennis", opponent: 'Case Western Reserve',           dateTime: DateTime(2026, 2, 21), location: 'Lexington, Va.',    isHome: true,  result: 'W 5-2'),
+      SportingEvent(sport: "Women's Tennis", opponent: '#25 Christopher Newport University', dateTime: DateTime(2026, 2, 22), location: 'Lexington, Va.', isHome: true,  result: 'W 7-0'),
       SportingEvent(sport: "Women's Tennis", opponent: 'University of Lynchburg',               dateTime: DateTime(2026, 2, 24), location: 'Lynchburg, Va.',    isHome: false, result: 'W 7-0'),
       SportingEvent(sport: "Women's Tennis", opponent: 'Roanoke College',                       dateTime: DateTime(2026, 2, 24), location: 'Lexington, Va.',    isHome: true,  result: 'W 7-0'),
       SportingEvent(sport: "Women's Tennis", opponent: 'Randolph-Macon College',                dateTime: DateTime(2026, 3, 4),  location: 'Ashland, Va.',      isHome: false, result: 'W 7-0'),
       SportingEvent(sport: "Women's Tennis", opponent: 'Averett University',                    dateTime: DateTime(2026, 3, 11), location: 'Danville, Va.',     isHome: false, result: 'W 7-0'),
       SportingEvent(sport: "Women's Tennis", opponent: 'University of Mary Washington',  dateTime: DateTime(2026, 3, 14), location: 'Lexington, Va.',    isHome: true,  result: 'W 5-2'),
       SportingEvent(sport: "Women's Tennis", opponent: 'Whitman College',                dateTime: DateTime(2026, 3, 17), location: 'Lexington, Va.',    isHome: true,  result: 'W 7-0'),
+      SportingEvent(sport: "Women's Tennis", opponent: '#5 Emory University',           dateTime: DateTime(2026, 3, 21), location: 'Atlanta, Ga.',      isHome: false, result: 'L 0-7'),
+      SportingEvent(sport: "Women's Tennis", opponent: '#37 Colby College',             dateTime: DateTime(2026, 3, 22), location: 'TBD',               isHome: false, result: 'W 5-2'),
+      SportingEvent(sport: "Women's Tennis", opponent: 'Sweet Briar College',           dateTime: DateTime(2026, 3, 24), location: 'Sweet Briar, Va.',  isHome: false, result: 'W 6-1'),
     ];
     results.sort((a, b) => a.dateTime.compareTo(b.dateTime));
     return results;

@@ -324,6 +324,7 @@ class _NewsItem {
   final String timeAgo;
   final String asset;
   final Color tagColor;
+  final String url;
 
   const _NewsItem({
     required this.headline,
@@ -332,57 +333,64 @@ class _NewsItem {
     required this.timeAgo,
     required this.asset,
     required this.tagColor,
+    required this.url,
   });
 }
 
 const List<_NewsItem> _newsItems = [
   _NewsItem(
-    headline: "Women's Basketball Wins ODAC Championship & Advances to NCAA Round 2",
-    sport: "Women's Basketball",
-    sportTag: 'WBB',
-    timeAgo: '2 days ago',
-    asset: 'assets/images/wbb_allregion.png',
-    tagColor: Color(0xFF000399),
+    headline: 'Records Aplenty as No. 8 W&L Finishes Strong at Stith Invitational',
+    sport: "Women's Golf",
+    sportTag: 'WGOLF',
+    timeAgo: 'Yesterday',
+    asset: 'assets/images/generals_logo.png',
+    tagColor: Color(0xFF2E7D32),
+    url: 'https://generalssports.com/news/2026/3/31/womens-golf-records-aplenty-as-no-8-w-l-finishes-strong-at-stith-invitational.aspx',
   ),
   _NewsItem(
-    headline: "Women's Lacrosse Opens 5-2, Van Son Earns ODAC Weekly Honors",
-    sport: "Women's Lacrosse",
-    sportTag: 'WLAX',
-    timeAgo: '3 days ago',
-    asset: 'assets/images/womens_lacrosse.png',
-    tagColor: Color(0xFF1565C0),
-  ),
-  _NewsItem(
-    headline: "Men's Lacrosse Wins Overtime Thriller 14-13 vs Denison",
-    sport: "Men's Lacrosse",
-    sportTag: 'MLAX',
-    timeAgo: '2 weeks ago',
-    asset: 'assets/images/mens_lacrosse.webp',
-    tagColor: Color(0xFF283593),
-  ),
-  _NewsItem(
-    headline: "Baseball Opens Spring 6-3-1 in Non-Conference Play",
+    headline: 'Six-Run Fifth Inning Leads Baseball Past Wilson College',
     sport: 'Baseball',
     sportTag: 'BASE',
-    timeAgo: '1 week ago',
+    timeAgo: '2 days ago',
     asset: 'assets/images/baseball.webp',
     tagColor: Color(0xFF1B5E20),
+    url: 'https://generalssports.com/news/2026/3/30/six-run-fifth-inning-leads-baseball-past-wilson-college.aspx',
   ),
   _NewsItem(
-    headline: "Wrestling Team Earns Multiple All-ODAC Honors",
-    sport: 'Wrestling',
-    sportTag: 'WRES',
-    timeAgo: '3 weeks ago',
-    asset: 'assets/images/wrestling.webp',
-    tagColor: Color(0xFF4A148C),
+    headline: "Women's Track & Field Records Four Top-Ten Updates at Doc Jopson Invite",
+    sport: "Women's Track & Field",
+    sportTag: 'WTF',
+    timeAgo: '3 days ago',
+    asset: 'assets/images/generals_logo.png',
+    tagColor: Color(0xFF6A1B9A),
+    url: 'https://generalssports.com/news/2026/3/28/womens-track-and-field-womens-track-field-records-four-top-ten-updates-at-doc-jopson-invite.aspx',
   ),
   _NewsItem(
-    headline: "Volleyball Named to All-ODAC First Team",
-    sport: 'Volleyball',
-    sportTag: 'VB',
-    timeAgo: '1 month ago',
-    asset: 'assets/images/volleyball.webp',
-    tagColor: Color(0xFF880E4F),
+    headline: "No. 17 W&L's ODAC Winning Streak Snapped at Randolph-Macon",
+    sport: "Men's Lacrosse",
+    sportTag: 'MLAX',
+    timeAgo: '4 days ago',
+    asset: 'assets/images/mens_lacrosse.webp',
+    tagColor: Color(0xFF283593),
+    url: 'https://generalssports.com/news/2026/3/28/mens-lacrosse-no-17-w-ls-odac-winning-streak-snapped-at-randolph-macon.aspx',
+  ),
+  _NewsItem(
+    headline: "No. 36 Men's Tennis Claims Match at Averett in Top-2 ODAC Battle",
+    sport: "Men's Tennis",
+    sportTag: 'MTEN',
+    timeAgo: '4 days ago',
+    asset: 'assets/images/generals_logo.png',
+    tagColor: Color(0xFF01579B),
+    url: 'https://generalssports.com/news/2026/3/28/no-36-mens-tennis-claims-match-at-averett-in-top-2-odac-battle.aspx',
+  ),
+  _NewsItem(
+    headline: "No. 3 Women's Basketball Erases Eight-Point Deficit to Down No. 23 Bethel in NCAA Round of 16",
+    sport: "Women's Basketball",
+    sportTag: 'WBB',
+    timeAgo: '2 weeks ago',
+    asset: 'assets/images/wbb_allregion.png',
+    tagColor: Color(0xFF000399),
+    url: 'https://generalssports.com/news/2026/3/14/womens-basketball-no-3-womens-basketball-erases-eight-point-halftime-deficit-to-down-no-23-bethel-minn-in-ncaa-round-of-16.aspx',
   ),
 ];
 
@@ -394,8 +402,9 @@ class _HeroNewsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => launchUrl(
-        Uri.parse('https://generalssports.com/sports/mswim/2025-26'),
+        Uri.parse('https://generalssports.com/news/2026/3/28/no-6-womens-lacrosse-celebrates-senior-day-with-win-over-virginia-wesleyan.aspx'),
         mode: LaunchMode.externalApplication,
+        webOnlyWindowName: '_blank',
       ),
       child: Stack(
         children: [
@@ -404,7 +413,7 @@ class _HeroNewsCard extends StatelessWidget {
             width: double.infinity,
             height: 220,
             child: Image.asset(
-              'assets/images/swimming.webp',
+              'assets/images/womens_lacrosse.png',
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Container(
                 height: 220,
@@ -436,11 +445,11 @@ class _HeroNewsCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF000399),
+                      color: const Color(0xFF1565C0),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Text(
-                      'CHAMPIONSHIP PREVIEW',
+                      'SENIOR DAY',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 9,
@@ -451,7 +460,7 @@ class _HeroNewsCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'NATIONALS',
+                    'WIN 25-2',
                     style: TextStyle(
                       color: Color(0xFF6699FF),
                       fontSize: 32,
@@ -461,7 +470,7 @@ class _HeroNewsCard extends StatelessWidget {
                     ),
                   ),
                   const Text(
-                    'GENERALS SWIMMING',
+                    'NO. 6 WOMEN\'S LACROSSE',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -492,7 +501,7 @@ class _HeroNewsCaption extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Men\'s Swimming Qualifies for DIII National Championships',
+            'No. 6 Women\'s Lacrosse Celebrates Senior Day with Win Over Virginia Wesleyan',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w900,
@@ -503,10 +512,10 @@ class _HeroNewsCaption extends StatelessWidget {
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.pool, size: 13, color: Colors.grey),
+              const Icon(Icons.sports_hockey, size: 13, color: Colors.grey),
               const SizedBox(width: 4),
               Text(
-                'MSWIM  •  Today',
+                'WLAX  •  4 days ago',
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ],
@@ -560,8 +569,9 @@ class _NewsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => launchUrl(
-        Uri.parse('https://generalssports.com'),
+        Uri.parse(item.url),
         mode: LaunchMode.externalApplication,
+        webOnlyWindowName: '_blank',
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
