@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Gennies Live',
+      title: 'Gennie Live',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF000399),
@@ -151,7 +151,7 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'GENNIES LIVE',
+                    'GENNIE LIVE',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
@@ -766,6 +766,7 @@ class SchedulePage extends StatefulWidget {
 class _SchedulePageState extends State<SchedulePage> {
   late DateTime _selectedDate;
   late DateTime _weekStart;
+  late DateTime _displayedMonth;
   bool _isMonthView = false;
 
   static const _dayAbbrevs = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -782,6 +783,7 @@ class _SchedulePageState extends State<SchedulePage> {
     // Start week on Sunday (weekday 7 = Sunday in Dart → % 7 = 0)
     final dayOfWeek = now.weekday % 7;
     _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
+    _displayedMonth = DateTime(now.year, now.month, 1);
   }
 
   List<DateTime> get _weekDays =>
@@ -801,56 +803,95 @@ class _SchedulePageState extends State<SchedulePage> {
         e.dateTime.day == _selectedDate.day).toList();
   }
 
-  bool get _isViewingToday {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    return _selectedDate.year == today.year &&
-        _selectedDate.month == today.month &&
-        _selectedDate.day == today.day;
-  }
+  int _daysInMonth(int year, int month) => DateTime(year, month + 1, 0).day;
 
-  void _jumpToToday() {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final dayOfWeek = now.weekday % 7;
-    setState(() {
-      _selectedDate = today;
-      _weekStart = today.subtract(Duration(days: dayOfWeek));
-    });
-  }
-
-  List<DateTime> get _monthDays {
-    final firstDayOfMonth = DateTime(_selectedDate.year, _selectedDate.month, 1);
-    final lastDayOfMonth = DateTime(_selectedDate.year, _selectedDate.month + 1, 0);
-    final startWeekday = firstDayOfMonth.weekday % 7; // 0 = Sunday
-    final totalDays = lastDayOfMonth.day;
-
-    final days = <DateTime>[];
-    // Add empty days for alignment
-    for (int i = 0; i < startWeekday; i++) {
-      days.add(DateTime(0)); // placeholder
+  List<DateTime?> get _monthCells {
+    final firstWeekday = _displayedMonth.weekday % 7; // 0 = Sunday
+    final days = _daysInMonth(_displayedMonth.year, _displayedMonth.month);
+    final cells = <DateTime?>[];
+    for (int i = 0; i < firstWeekday; i++) cells.add(null);
+    for (int d = 1; d <= days; d++) {
+      cells.add(DateTime(_displayedMonth.year, _displayedMonth.month, d));
     }
-    // Add actual month days
-    for (int i = 1; i <= totalDays; i++) {
-      days.add(DateTime(_selectedDate.year, _selectedDate.month, i));
+    while (cells.length % 7 != 0) cells.add(null);
+    return cells;
+  }
+
+  Widget _buildMonthGrid() {
+    final cells = _monthCells;
+    final rows = <Widget>[];
+    for (int i = 0; i < cells.length; i += 7) {
+      final week = cells.sublist(i, i + 7);
+      rows.add(Row(
+        children: week.map((date) {
+          if (date == null) return const Expanded(child: SizedBox(height: 44));
+          final isSelected = date.day == _selectedDate.day &&
+              date.month == _selectedDate.month &&
+              date.year == _selectedDate.year;
+          final hasEvents = _hasEventsOn(date);
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _selectedDate = date),
+              child: Container(
+                margin: const EdgeInsets.all(2),
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${date.day}',
+                      style: TextStyle(
+                        color: isSelected ? const Color(0xFF000399) : Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Container(
+                      width: 5,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: hasEvents
+                            ? (isSelected ? const Color(0xFF000399) : Colors.white)
+                            : Colors.transparent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ));
     }
-    return days;
+    return Column(children: rows);
   }
 
-  void _previousMonth() {
-    setState(() {
-      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1, 1);
-      final dayOfWeek = _selectedDate.weekday % 7;
-      _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
-    });
-  }
-
-  void _nextMonth() {
-    setState(() {
-      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1, 1);
-      final dayOfWeek = _selectedDate.weekday % 7;
-      _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
-    });
+  Widget _toggleBtn(String label, bool selected, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+        decoration: BoxDecoration(
+          color: selected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? const Color(0xFF000399) : Colors.white,
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -862,8 +903,34 @@ class _SchedulePageState extends State<SchedulePage> {
     }
     final dates = grouped.keys.toList();
 
+    final headerMonth = _isMonthView
+        ? '${_monthNames[_displayedMonth.month]} ${_displayedMonth.year}'
+        : _monthNames[_weekDays[3].month];
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          final now = DateTime.now();
+          final today = DateTime(now.year, now.month, now.day);
+          final dayOfWeek = today.weekday % 7;
+          setState(() {
+            _selectedDate = today;
+            _weekStart = today.subtract(Duration(days: dayOfWeek));
+            _displayedMonth = DateTime(today.year, today.month, 1);
+          });
+        },
+        backgroundColor: const Color(0xFF000399),
+        label: const Text(
+          'TODAY',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+        icon: const Icon(Icons.today, color: Colors.white),
+      ),
       body: Column(
         children: [
           // ── Blue calendar header ──
@@ -873,7 +940,7 @@ class _SchedulePageState extends State<SchedulePage> {
               bottom: false,
               child: Column(
                 children: [
-                  // Title + nav arrows + toggle button
+                  // Title + nav arrows
                   Padding(
                     padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
                     child: Row(
@@ -881,52 +948,73 @@ class _SchedulePageState extends State<SchedulePage> {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.chevron_left, color: Colors.white),
-                          onPressed: _isMonthView
-                              ? _previousMonth
-                              : () => setState(() =>
-                                  _weekStart = _weekStart.subtract(const Duration(days: 7))),
+                          onPressed: () => setState(() {
+                            if (_isMonthView) {
+                              _displayedMonth = DateTime(
+                                  _displayedMonth.year, _displayedMonth.month - 1, 1);
+                            } else {
+                              _weekStart = _weekStart.subtract(const Duration(days: 7));
+                            }
+                          }),
                         ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                _isMonthView
-                                    ? _monthNames[_selectedDate.month]
-                                    : _monthNames[_weekDays[3].month],
-                                style: const TextStyle(
-                                  color: Colors.white60,
-                                  fontSize: 11,
-                                  letterSpacing: 2,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                        Column(
+                          children: [
+                            Text(
+                              headerMonth,
+                              style: const TextStyle(
+                                color: Colors.white60,
+                                fontSize: 11,
+                                letterSpacing: 2,
+                                fontWeight: FontWeight.w500,
                               ),
-                              const SizedBox(height: 2),
-                              const Text(
-                                'SCHEDULE',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2,
-                                ),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'SCHEDULE',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
                               ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            _isMonthView ? Icons.view_week : Icons.calendar_month,
-                            color: Colors.white,
-                          ),
-                          onPressed: () => setState(() => _isMonthView = !_isMonthView),
-                          tooltip: _isMonthView ? 'Week View' : 'Month View',
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white38),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _toggleBtn('WEEK', !_isMonthView,
+                                          () => setState(() => _isMonthView = false)),
+                                      _toggleBtn('MONTH', _isMonthView,
+                                          () => setState(() {
+                                                _isMonthView = true;
+                                                _displayedMonth = DateTime(
+                                                    _selectedDate.year, _selectedDate.month, 1);
+                                              })),
+                                    ],
+                                  ),
+                                ),
+                                  ],
+                            ),
+                          ],
                         ),
                         IconButton(
                           icon: const Icon(Icons.chevron_right, color: Colors.white),
-                          onPressed: _isMonthView
-                              ? _nextMonth
-                              : () => setState(() =>
-                                  _weekStart = _weekStart.add(const Duration(days: 7))),
+                          onPressed: () => setState(() {
+                            if (_isMonthView) {
+                              _displayedMonth = DateTime(
+                                  _displayedMonth.year, _displayedMonth.month + 1, 1);
+                            } else {
+                              _weekStart = _weekStart.add(const Duration(days: 7));
+                            }
+                          }),
                         ),
                       ],
                     ),
@@ -951,82 +1039,13 @@ class _SchedulePageState extends State<SchedulePage> {
                           .toList(),
                     ),
                   ),
-                  // Date cells (week or month view)
+                  // Date cells — week strip or full month grid
                   if (_isMonthView)
-                    // Month view grid
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 7,
-                          childAspectRatio: 1.0,
-                          crossAxisSpacing: 2,
-                          mainAxisSpacing: 2,
-                        ),
-                        itemCount: _monthDays.length,
-                        itemBuilder: (context, index) {
-                          final date = _monthDays[index];
-                          if (date.year == 0) {
-                            // Empty placeholder
-                            return const SizedBox();
-                          }
-                          final isSelected = date.day == _selectedDate.day &&
-                              date.month == _selectedDate.month &&
-                              date.year == _selectedDate.year;
-                          final hasEvents = _hasEventsOn(date);
-                          final isToday = () {
-                            final now = DateTime.now();
-                            return date.day == now.day &&
-                                date.month == now.month &&
-                                date.year == now.year;
-                          }();
-                          return GestureDetector(
-                            onTap: () => setState(() => _selectedDate = date),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isSelected ? Colors.white : Colors.transparent,
-                                borderRadius: BorderRadius.circular(6),
-                                border: isToday && !isSelected
-                                    ? Border.all(color: Colors.white, width: 1.5)
-                                    : null,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '${date.day}',
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? const Color(0xFF000399)
-                                          : Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Container(
-                                    width: 4,
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: hasEvents
-                                          ? (isSelected
-                                              ? const Color(0xFF000399)
-                                              : Colors.white)
-                                          : Colors.transparent,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      child: _buildMonthGrid(),
                     )
                   else
-                    // Week view row
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
                       child: Row(
@@ -1139,22 +1158,6 @@ class _SchedulePageState extends State<SchedulePage> {
           ),
         ],
       ),
-      floatingActionButton: _isViewingToday
-          ? null
-          : FloatingActionButton.extended(
-              heroTag: 'schedule_today_button',
-              onPressed: _jumpToToday,
-              backgroundColor: const Color(0xFF000399),
-              foregroundColor: Colors.white,
-              icon: const Icon(Icons.today),
-              label: const Text(
-                'TODAY',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
     );
   }
 }
@@ -1403,7 +1406,7 @@ class _ScheduleEventTile extends StatelessWidget {
                   SizedBox(
                     width: 24,
                     child: Text(
-                      'VS',
+                      event.isHome ? 'VS' : '@',
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -1418,28 +1421,6 @@ class _ScheduleEventTile extends StatelessWidget {
                       style: const TextStyle(fontSize: 13, color: Colors.black87),
                     ),
                   ),
-                  // Home/Away badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: event.isHome ? Colors.blue[50] : Colors.green[50],
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                        color: event.isHome ? Colors.blue[700]! : Colors.green[700]!,
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      event.isHome ? 'HOME' : 'AWAY',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                        color: event.isHome ? Colors.blue[700] : Colors.green[700],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
                   Text(
                     event.formattedTime,
                     style: const TextStyle(fontSize: 11, color: Colors.grey),
@@ -1469,12 +1450,80 @@ class WorkoutClassesPage extends StatefulWidget {
 class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
   late DateTime _selectedDate;
   late DateTime _weekStart;
+  late DateTime _displayedMonth;
   bool _isMonthView = false;
 
   static const _dayAbbrevs = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   static const _monthNames = [
     '', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
     'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+  ];
+
+  static const List<Map<String, dynamic>> _schedule = [
+    {
+      'day': 'Sunday',
+      'classes': [
+        {'time': '1:00 – 4:00 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Monday',
+      'classes': [
+        {'time': '6:00 – 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '12:30 – 2:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness'},
+        {'time': '7:30 – 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Tuesday',
+      'classes': [
+        {'time': '6:00 – 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '11:00 AM – 1:00 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '12:00 PM', 'name': 'Open Dancing', 'type': 'fitness'},
+        {'time': '5:30 PM', 'name': 'Pilates', 'type': 'fitness'},
+        {'time': '6:30 – 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Wednesday',
+      'classes': [
+        {'time': '6:00 – 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '12:30 – 2:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '6:00 PM', 'name': 'Tone45', 'type': 'fitness'},
+        {'time': '6:30 – 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Thursday',
+      'classes': [
+        {'time': '6:00 – 8:00 AM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness'},
+        {'time': '11:00 AM – 1:00 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '5:30 PM', 'name': 'Tone45', 'type': 'fitness'},
+        {'time': '6:30 – 9:30 PM', 'name': 'Open Swim', 'type': 'swim'},
+      ],
+    },
+    {
+      'day': 'Friday',
+      'classes': [
+        {'time': '11:00 AM – 2:00 PM', 'name': 'Open Swim', 'type': 'swim'},
+        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness'},
+        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness'},
+      ],
+    },
+    {
+      'day': 'Saturday',
+      'classes': [
+        {'time': '10:00 AM', 'name': 'Spin', 'type': 'fitness'},
+      ],
+    },
   ];
 
   @override
@@ -1484,153 +1533,147 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
     _selectedDate = DateTime(now.year, now.month, now.day);
     final dayOfWeek = now.weekday % 7;
     _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
+    _displayedMonth = DateTime(now.year, now.month, 1);
   }
 
   List<DateTime> get _weekDays =>
       List.generate(7, (i) => _weekStart.add(Duration(days: i)));
 
-  List<DateTime> get _monthDays {
-    final firstDayOfMonth = DateTime(_selectedDate.year, _selectedDate.month, 1);
-    final lastDayOfMonth = DateTime(_selectedDate.year, _selectedDate.month + 1, 0);
-    final startWeekday = firstDayOfMonth.weekday % 7;
-    final totalDays = lastDayOfMonth.day;
+  int _daysInMonth(int year, int month) => DateTime(year, month + 1, 0).day;
 
-    final days = <DateTime>[];
-    for (int i = 0; i < startWeekday; i++) {
-      days.add(DateTime(0));
+  List<DateTime?> get _monthCells {
+    final firstWeekday = _displayedMonth.weekday % 7;
+    final days = _daysInMonth(_displayedMonth.year, _displayedMonth.month);
+    final cells = <DateTime?>[];
+    for (int i = 0; i < firstWeekday; i++) cells.add(null);
+    for (int d = 1; d <= days; d++) {
+      cells.add(DateTime(_displayedMonth.year, _displayedMonth.month, d));
     }
-    for (int i = 1; i <= totalDays; i++) {
-      days.add(DateTime(_selectedDate.year, _selectedDate.month, i));
+    while (cells.length % 7 != 0) cells.add(null);
+    return cells;
+  }
+
+  Widget _buildMonthGrid() {
+    final cells = _monthCells;
+    final rows = <Widget>[];
+    for (int i = 0; i < cells.length; i += 7) {
+      final week = cells.sublist(i, i + 7);
+      rows.add(Row(
+        children: week.map((date) {
+          if (date == null) return const Expanded(child: SizedBox(height: 44));
+          final isSelected = date.day == _selectedDate.day &&
+              date.month == _selectedDate.month &&
+              date.year == _selectedDate.year;
+          final dayIndex = date.weekday % 7;
+          final hasClasses = (_schedule[dayIndex]['classes'] as List).isNotEmpty;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _selectedDate = date),
+              child: Container(
+                margin: const EdgeInsets.all(2),
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${date.day}',
+                      style: TextStyle(
+                        color: isSelected ? const Color(0xFF000399) : Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Container(
+                      width: 5,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: hasClasses
+                            ? (isSelected ? const Color(0xFF000399) : Colors.white)
+                            : Colors.transparent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ));
     }
-    return days;
+    return Column(children: rows);
   }
 
-  void _previousMonth() {
-    setState(() {
-      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1, 1);
-      final dayOfWeek = _selectedDate.weekday % 7;
-      _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
-    });
+  Widget _toggleBtn(String label, bool selected, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+        decoration: BoxDecoration(
+          color: selected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? const Color(0xFF000399) : Colors.white,
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+      ),
+    );
   }
 
-  void _nextMonth() {
-    setState(() {
-      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1, 1);
-      final dayOfWeek = _selectedDate.weekday % 7;
-      _weekStart = _selectedDate.subtract(Duration(days: dayOfWeek));
-    });
+  List<Map<String, dynamic>> get _classesForSelected {
+    final dayIndex = _selectedDate.weekday % 7;
+    return _schedule[dayIndex]['classes'] as List<Map<String, dynamic>>;
   }
 
-  static const List<Map<String, dynamic>> _schedule = [
-    {
-      'day': 'Sunday',
-      'classes': [
-        {'time': '1:00 PM - 4:00 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-      ],
-    },
-    {
-      'day': 'Monday',
-      'classes': [
-        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness', 'location': 'Room 231'},
-        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness', 'location': 'Room 245'},
-        {'time': '12:30 PM - 2:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness', 'location': 'Room 250'},
-        {'time': '7:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-      ],
-    },
-    {
-      'day': 'Tuesday',
-      'classes': [
-        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness', 'location': 'Room 231'},
-        {'time': '11:00 AM - 1:00 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '12:00 PM', 'name': 'Open Dancing', 'type': 'fitness', 'location': 'Room 245'},
-        {'time': '5:30 PM', 'name': 'Pilates', 'type': 'fitness', 'location': 'Room 231'},
-        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-      ],
-    },
-    {
-      'day': 'Wednesday',
-      'classes': [
-        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness', 'location': 'Room 231'},
-        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness', 'location': 'Room 245'},
-        {'time': '12:30 PM - 2:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '4:30 PM - 6:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '6:00 PM', 'name': 'Tone45', 'type': 'fitness', 'location': 'Room 245'},
-        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-      ],
-    },
-    {
-      'day': 'Thursday',
-      'classes': [
-        {'time': '6:00 AM - 8:00 AM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '7:00 AM', 'name': 'Yoga', 'type': 'fitness', 'location': 'Room 231'},
-        {'time': '11:00 AM - 1:00 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness', 'location': 'Room 245'},
-        {'time': '4:30 PM - 6:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '5:30 PM', 'name': 'Tone45', 'type': 'fitness', 'location': 'Room 245'},
-        {'time': '6:30 PM - 9:30 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-      ],
-    },
-    {
-      'day': 'Friday',
-      'classes': [
-        {'time': '11:00 AM - 2:00 PM', 'name': 'Open Swim', 'type': 'swim', 'location': 'Natatorium'},
-        {'time': '12:00 PM', 'name': 'TRX', 'type': 'fitness', 'location': 'Room 245'},
-        {'time': '5:30 PM', 'name': 'Spin', 'type': 'fitness', 'location': 'Room 250'},
-      ],
-    },
-    {
-      'day': 'Saturday',
-      'classes': [
-        {'time': '10:00 AM', 'name': 'Spin', 'type': 'fitness', 'location': 'Room 250'},
-      ],
-    },
-  ];
-
-  List<Map<String, dynamic>> _getClassesForDay(DateTime date) {
-    final dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    final dayName = dayNames[date.weekday % 7];
-    final dayData = _schedule.firstWhere((d) => d['day'] == dayName);
-    return (dayData['classes'] as List).cast<Map<String, dynamic>>();
-  }
-
-  bool get _isViewingToday {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    return _selectedDate.year == today.year &&
-        _selectedDate.month == today.month &&
-        _selectedDate.day == today.day;
-  }
-
-  void _jumpToToday() {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final dayOfWeek = now.weekday % 7;
-    setState(() {
-      _selectedDate = today;
-      _weekStart = today.subtract(Duration(days: dayOfWeek));
-    });
+  String get _selectedDayName {
+    return _schedule[_selectedDate.weekday % 7]['day'] as String;
   }
 
   @override
   Widget build(BuildContext context) {
-    final todayClasses = _getClassesForDay(_selectedDate);
+    final classes = _classesForSelected;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          final now = DateTime.now();
+          final today = DateTime(now.year, now.month, now.day);
+          final dayOfWeek = today.weekday % 7;
+          setState(() {
+            _selectedDate = today;
+            _weekStart = today.subtract(Duration(days: dayOfWeek));
+            _displayedMonth = DateTime(today.year, today.month, 1);
+          });
+        },
+        backgroundColor: const Color(0xFF000399),
+        label: const Text(
+          'TODAY',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1),
+        ),
+        icon: const Icon(Icons.today, color: Colors.white),
+      ),
       body: Column(
         children: [
-          // Calendar header
+          // ── Blue calendar header ──
           Container(
             color: const Color(0xFF000399),
             child: SafeArea(
               bottom: false,
               child: Column(
                 children: [
-                  // Title + nav arrows + toggle button
+                  // Title + nav arrows
                   Padding(
                     padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
                     child: Row(
@@ -1638,57 +1681,75 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.chevron_left, color: Colors.white),
-                          onPressed: _isMonthView
-                              ? _previousMonth
-                              : () => setState(() =>
-                                  _weekStart = _weekStart.subtract(const Duration(days: 7))),
+                          onPressed: () => setState(() {
+                            if (_isMonthView) {
+                              _displayedMonth = DateTime(
+                                  _displayedMonth.year, _displayedMonth.month - 1, 1);
+                            } else {
+                              _weekStart = _weekStart.subtract(const Duration(days: 7));
+                            }
+                          }),
                         ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                _isMonthView
-                                    ? _monthNames[_selectedDate.month]
-                                    : _monthNames[_weekDays[3].month],
-                                style: const TextStyle(
-                                  color: Colors.white60,
-                                  fontSize: 11,
-                                  letterSpacing: 2,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                        Column(
+                          children: [
+                            Text(
+                              _isMonthView
+                                  ? '${_monthNames[_displayedMonth.month]} ${_displayedMonth.year}'
+                                  : _monthNames[_weekDays[3].month],
+                              style: const TextStyle(
+                                color: Colors.white60,
+                                fontSize: 11,
+                                letterSpacing: 2,
+                                fontWeight: FontWeight.w500,
                               ),
-                              const SizedBox(height: 2),
-                              const Text(
-                                'GROUPEX',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2,
-                                ),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'GROUPEX',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2,
                               ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            _isMonthView ? Icons.view_week : Icons.calendar_month,
-                            color: Colors.white,
-                          ),
-                          onPressed: () => setState(() => _isMonthView = !_isMonthView),
-                          tooltip: _isMonthView ? 'Week View' : 'Month View',
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white38),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  _toggleBtn('WEEK', !_isMonthView,
+                                      () => setState(() => _isMonthView = false)),
+                                  _toggleBtn('MONTH', _isMonthView,
+                                      () => setState(() {
+                                            _isMonthView = true;
+                                            _displayedMonth = DateTime(
+                                                _selectedDate.year, _selectedDate.month, 1);
+                                          })),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                         IconButton(
                           icon: const Icon(Icons.chevron_right, color: Colors.white),
-                          onPressed: _isMonthView
-                              ? _nextMonth
-                              : () => setState(() =>
-                                  _weekStart = _weekStart.add(const Duration(days: 7))),
+                          onPressed: () => setState(() {
+                            if (_isMonthView) {
+                              _displayedMonth = DateTime(
+                                  _displayedMonth.year, _displayedMonth.month + 1, 1);
+                            } else {
+                              _weekStart = _weekStart.add(const Duration(days: 7));
+                            }
+                          }),
                         ),
                       ],
                     ),
                   ),
-                  // Day abbreviations
+                  // Day-of-week abbreviations
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Row(
@@ -1708,64 +1769,13 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
                           .toList(),
                     ),
                   ),
-                  // Date cells (week or month view)
+                  // Date cells — week strip or full month grid
                   if (_isMonthView)
-                    // Month view grid
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 7,
-                          childAspectRatio: 1.0,
-                          crossAxisSpacing: 2,
-                          mainAxisSpacing: 2,
-                        ),
-                        itemCount: _monthDays.length,
-                        itemBuilder: (context, index) {
-                          final date = _monthDays[index];
-                          if (date.year == 0) {
-                            return const SizedBox();
-                          }
-                          final isSelected = date.day == _selectedDate.day &&
-                              date.month == _selectedDate.month &&
-                              date.year == _selectedDate.year;
-                          final isToday = () {
-                            final now = DateTime.now();
-                            return date.day == now.day &&
-                                date.month == now.month &&
-                                date.year == now.year;
-                          }();
-                          return GestureDetector(
-                            onTap: () => setState(() => _selectedDate = date),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isSelected ? Colors.white : Colors.transparent,
-                                borderRadius: BorderRadius.circular(6),
-                                border: isToday && !isSelected
-                                    ? Border.all(color: Colors.white, width: 1.5)
-                                    : null,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${date.day}',
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? const Color(0xFF000399)
-                                        : Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      child: _buildMonthGrid(),
                     )
                   else
-                    // Week view row
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 4, 8, 14),
                       child: Row(
@@ -1773,6 +1783,9 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
                           final isSelected = date.day == _selectedDate.day &&
                               date.month == _selectedDate.month &&
                               date.year == _selectedDate.year;
+                          final dayIndex = date.weekday % 7;
+                          final hasClasses =
+                              (_schedule[dayIndex]['classes'] as List).isNotEmpty;
                           return Expanded(
                             child: GestureDetector(
                               onTap: () => setState(() => _selectedDate = date),
@@ -1783,17 +1796,33 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
                                   color: isSelected ? Colors.white : Colors.transparent,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    '${date.day}',
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? const Color(0xFF000399)
-                                          : Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      '${date.day}',
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? const Color(0xFF000399)
+                                            : Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
                                     ),
-                                  ),
+                                    const SizedBox(height: 4),
+                                    Container(
+                                      width: 5,
+                                      height: 5,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: hasClasses
+                                            ? (isSelected
+                                                ? const Color(0xFF000399)
+                                                : Colors.white)
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -1806,13 +1835,13 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
             ),
           ),
 
-          // Date banner
+          // ── Date banner ──
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             color: const Color(0xFF00024A),
             child: Text(
-              '${_monthNames[_selectedDate.month]} ${_selectedDate.day}, ${_selectedDate.year}',
+              '${_selectedDayName.toUpperCase()} • ${_monthNames[_selectedDate.month]} ${_selectedDate.day}, ${_selectedDate.year}',
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 17,
@@ -1822,9 +1851,9 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
             ),
           ),
 
-          // Classes list
+          // ── Classes list ──
           Expanded(
-            child: todayClasses.isEmpty
+            child: classes.isEmpty
                 ? const Center(
                     child: Text(
                       'No classes scheduled for this day.',
@@ -1832,96 +1861,50 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.all(12),
-                    itemCount: todayClasses.length,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: classes.length,
                     itemBuilder: (context, index) {
-                      final cls = todayClasses[index];
+                      final cls = classes[index];
                       final isSwim = cls['type'] == 'swim';
                       final isOpenSwim = (cls['name'] as String).contains('Open Swim');
-
                       return Card(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(14),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: isSwim ? Colors.blue[50] : const Color(0xFFEEEEFF),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Icon(
-                                  isSwim ? Icons.pool : Icons.fitness_center,
-                                  color: isSwim ? Colors.blue[700] : const Color(0xFF000399),
-                                  size: 28,
-                                ),
-                              ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      cls['name'] as String,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      cls['time'] as String,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                    if (cls['location'] != null && cls['type'] == 'fitness')
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 2),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.location_on,
-                                              size: 14,
-                                              color: Colors.grey[500],
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              cls['location'] as String,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey[600],
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              if (!isOpenSwim)
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF000399),
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  ),
-                                  onPressed: () => _showClassSignUpDialog(
-                                    context,
-                                    cls['name'] as String,
-                                    cls['time'] as String,
-                                  ),
-                                  child: const Text('Sign Up'),
-                                ),
-                            ],
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: ListTile(
+                          leading: Icon(
+                            isSwim ? Icons.pool : Icons.fitness_center,
+                            color: isSwim ? Colors.blue[700] : const Color(0xFF000399),
                           ),
+                          title: Text(
+                            cls['name'] as String,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(cls['time'] as String),
+                          trailing: isOpenSwim
+                              ? null
+                              : SizedBox(
+                                  width: 72,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF000399),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 4),
+                                      textStyle: const TextStyle(fontSize: 11),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)),
+                                    ),
+                                    onPressed: () => _showClassSignUpDialog(
+                                      context,
+                                      cls['name'] as String,
+                                      _selectedDayName,
+                                      cls['time'] as String,
+                                    ),
+                                    child: const Text('Sign Up'),
+                                  ),
+                                ),
                         ),
                       );
                     },
@@ -1929,31 +1912,12 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
           ),
         ],
       ),
-      floatingActionButton: _isViewingToday
-          ? null
-          : FloatingActionButton.extended(
-              heroTag: 'groupex_today_button',
-              onPressed: _jumpToToday,
-              backgroundColor: const Color(0xFF000399),
-              foregroundColor: Colors.white,
-              icon: const Icon(Icons.today),
-              label: const Text(
-                'TODAY',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
     );
   }
 
-  void _showClassSignUpDialog(BuildContext context, String className, String time) {
+  void _showClassSignUpDialog(BuildContext context, String className, String day, String time) {
     final nameController = TextEditingController();
     final emailController = TextEditingController();
-    final dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    final dayName = dayNames[_selectedDate.weekday % 7];
-
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -1962,7 +1926,7 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('$dayName at $time', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+            Text('$day at $time', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
             const SizedBox(height: 12),
             TextField(
               controller: nameController,
@@ -1990,7 +1954,7 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Signed up for $className on $dayName at $time!'),
+                  content: Text('Signed up for $className on $day at $time!'),
                   backgroundColor: const Color(0xFF000399),
                 ),
               );
@@ -1999,325 +1963,6 @@ class _WorkoutClassesPageState extends State<WorkoutClassesPage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────
-// DARC OCCUPANCY PAGE
-// ─────────────────────────────────────────────
-class DarcOccupancyPage extends StatelessWidget {
-  const DarcOccupancyPage({super.key});
-
-  static const List<(String, double)> _weekdaySlots = [
-    ('6 AM',  0.10),
-    ('7 AM',  0.15),
-    ('8 AM',  0.25),
-    ('9 AM',  0.35),
-    ('10 AM', 0.45),
-    ('11 AM', 0.65),
-    ('12 PM', 0.85),
-    ('1 PM',  0.75),
-    ('2 PM',  0.55),
-    ('3 PM',  0.60),
-    ('4 PM',  0.75),
-    ('5 PM',  0.88),
-    ('6 PM',  0.95),
-    ('7 PM',  0.70),
-    ('8 PM',  0.45),
-    ('9 PM',  0.30),
-    ('10 PM', 0.15),
-  ];
-
-  static const List<(String, double)> _weekendSlots = [
-    ('8 AM',  0.10),
-    ('9 AM',  0.20),
-    ('10 AM', 0.38),
-    ('11 AM', 0.52),
-    ('12 PM', 0.65),
-    ('1 PM',  0.62),
-    ('2 PM',  0.58),
-    ('3 PM',  0.45),
-    ('4 PM',  0.30),
-    ('5 PM',  0.22),
-    ('6 PM',  0.15),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final isWeekend = now.weekday == DateTime.saturday || now.weekday == DateTime.sunday;
-    final currentSlots = isWeekend ? _weekendSlots : _weekdaySlots;
-
-    // Find current occupancy based on time
-    final currentHour = now.hour;
-    String currentOccupancyLabel = 'N/A';
-    double currentOccupancyValue = 0.0;
-
-    for (final slot in currentSlots) {
-      final slotHour = _parseHour(slot.$1);
-      if (slotHour == currentHour) {
-        currentOccupancyValue = slot.$2;
-        if (currentOccupancyValue < 0.35) {
-          currentOccupancyLabel = 'Light';
-        } else if (currentOccupancyValue < 0.70) {
-          currentOccupancyLabel = 'Moderate';
-        } else {
-          currentOccupancyLabel = 'Busy';
-        }
-        break;
-      }
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('DARC Fitness Center Occupancy'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Current occupancy card
-          Card(
-            elevation: 3,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF000399), Color(0xFF1A237E)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  const Text(
-                    'Current Occupancy',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    '${(currentOccupancyValue * 100).toInt()}%',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 48,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      currentOccupancyLabel,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Updated ${_formatTime(now)}',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Predicted busy times card
-          Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.bar_chart, color: Color(0xFF000399)),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Predicted Busy Times',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            Text(
-                              'Typical patterns for today',
-                              style: TextStyle(fontSize: 12, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    isWeekend ? 'Typical Weekend' : 'Typical Weekday',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  const SizedBox(height: 12),
-                  ...currentSlots.map((s) => _buildOccupancyRow(s.$1, s.$2, currentHour)),
-                  const SizedBox(height: 16),
-                  const Row(
-                    children: [
-                      _OccupancyLegendDot(color: Colors.green, label: 'Light (0-35%)'),
-                      SizedBox(width: 12),
-                      _OccupancyLegendDot(color: Colors.orange, label: 'Moderate (35-70%)'),
-                      SizedBox(width: 12),
-                      _OccupancyLegendDot(color: Colors.red, label: 'Busy (70%+)'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  int _parseHour(String timeStr) {
-    final hourStr = timeStr.replaceAll(RegExp(r'[^0-9]'), '');
-    int hour = int.parse(hourStr);
-    if (timeStr.contains('PM') && hour != 12) {
-      hour += 12;
-    } else if (timeStr.contains('AM') && hour == 12) {
-      hour = 0;
-    }
-    return hour;
-  }
-
-  String _formatTime(DateTime time) {
-    final hour = time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
-    final period = time.hour >= 12 ? 'PM' : 'AM';
-    final minute = time.minute.toString().padLeft(2, '0');
-    return '$hour:$minute $period';
-  }
-
-  Widget _buildOccupancyRow(String time, double occupancy, int currentHour) {
-    final slotHour = _parseHour(time);
-    final isCurrent = slotHour == currentHour;
-
-    final Color color;
-    final String label;
-    if (occupancy < 0.35) {
-      color = Colors.green;
-      label = 'Light';
-    } else if (occupancy < 0.70) {
-      color = Colors.orange;
-      label = 'Moderate';
-    } else {
-      color = Colors.red;
-      label = 'Busy';
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isCurrent ? const Color(0xFF000399).withValues(alpha: 0.05) : null,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-      margin: const EdgeInsets.only(bottom: 4),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 60,
-            child: Row(
-              children: [
-                Text(
-                  time,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-                if (isCurrent)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4),
-                    child: Icon(Icons.circle, size: 8, color: Color(0xFF000399)),
-                  ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                value: occupancy,
-                backgroundColor: Colors.grey[200],
-                valueColor: AlwaysStoppedAnimation<Color>(color),
-                minHeight: 18,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          SizedBox(
-            width: 70,
-            child: Row(
-              children: [
-                Text(
-                  '${(occupancy * 100).toInt()}%',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _OccupancyLegendDot extends StatelessWidget {
-  final Color color;
-  final String label;
-  const _OccupancyLegendDot({required this.color, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 10)),
-      ],
     );
   }
 }
@@ -2342,12 +1987,12 @@ class FacilityHoursPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: const [
           _DuchossoisHoursCard(),
-          _HoursCard(facility: 'Natatorium', hours: 'Mon–Thu: 6:00 AM – 9:30 PM\nFri: 11:00 AM – 2:00 PM\nSat: Closed\nSun: 1:00 PM – 4:00 PM'),
-          _HoursCard(facility: 'Fitness Center', hours: 'Mon–Thu: 6:00 AM – 10:00 PM\nFri: 6:00 AM – 8:00 PM\nSat: 9:00 AM – 8:00 PM\nSun: 11:00 AM – 10:00 PM'),
-          _HoursCard(facility: 'Outdoor Track', hours: 'Daily: 6:00 AM – 9:00 PM\n(Weather permitting)'),
-          _HoursCard(facility: 'Wilson Field', hours: 'Daily: 6:00 AM – Dark\n(Weather permitting)'),
-          _HoursCard(facility: 'Captain Dick Smith Baseball Field', hours: 'Daily: 6:00 AM – Dark\n(Weather permitting)'),
-          _HoursCard(facility: 'Fuge Field', hours: 'Daily: Dawn – Dusk\n(Weather permitting)'),
+          _HoursCard(facility: 'Natatorium — Open Swim (Winter 2026)', hours: 'Sun: 1:00 – 4:00 PM\nMon: 6:00–8:00 AM, 12:30–2:30 PM, 7:30–9:30 PM\nTue: 6:00–8:00 AM, 11:00 AM–1:00 PM, 6:30–9:30 PM\nWed: 6:00–8:00 AM, 12:30–2:30 PM, 6:30–9:30 PM\nThu: 6:00–8:00 AM, 11:00 AM–1:00 PM, 6:30–9:30 PM\nFri: 11:00 AM – 2:00 PM\nSat: Closed'),
+          _HoursCard(facility: 'Fitness Center', hours: 'Mon–Fri: 5:30 AM – 11:00 PM\nSat–Sun: 7:00 AM – 10:00 PM'),
+          _HoursCard(facility: 'Outdoor Track', hours: 'Daily: 6:00 AM – 9:00 PM'),
+          _HoursCard(facility: 'Wilson Field', hours: 'Daily: 6:00 AM – Dark'),
+          _HoursCard(facility: 'Captain Dick Smith Baseball Field', hours: 'Daily: 6:00 AM – Dark'),
+          _HoursCard(facility: 'Fuge Field', hours: 'Daily: Dawn – Dusk'),
         ],
       ),
     );
@@ -2373,7 +2018,6 @@ class _HoursCard extends StatelessWidget {
         ),
         title: Text(facility, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(hours),
-        isThreeLine: true,
       ),
     );
   }
@@ -2388,8 +2032,7 @@ class _DuchossoisHoursCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ExpansionTile(
         leading: const CircleAvatar(
           backgroundColor: Color(0xFF000399),
           child: Icon(Icons.access_time, color: Colors.white),
@@ -2399,9 +2042,31 @@ class _DuchossoisHoursCard extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: const Text(
-          'Mon–Fri: 5:30 AM – 11:00 PM\nSat–Sun: 8:00 AM – 10:00 PM',
+          'Mon–Fri: 6:00 AM – 11:00 PM\nSat–Sun: 8:00 AM – 10:00 PM',
         ),
-        isThreeLine: true,
+        trailing: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'click for\nbusy hours',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 9,
+                color: Color(0xFF000399),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            Icon(Icons.expand_more, size: 18, color: Colors.grey),
+          ],
+        ),
+        children: const [
+          Divider(height: 1),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: _BusyHoursCard(),
+          ),
+        ],
       ),
     );
   }
@@ -2859,153 +2524,6 @@ class ClubSportsPage extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// VARSITY LIFT SCHEDULE PAGE
-// ─────────────────────────────────────────────
-class VarsityLiftSchedulePage extends StatelessWidget {
-  const VarsityLiftSchedulePage({super.key});
-
-  static const Map<String, List<Map<String, String>>> _liftSchedule = {
-    'Monday': [
-      {'time': '6:00 AM - 7:30 AM', 'sport': 'Football'},
-      {'time': '7:30 AM - 9:00 AM', 'sport': 'Men\'s Basketball'},
-      {'time': '3:00 PM - 4:30 PM', 'sport': 'Women\'s Soccer'},
-      {'time': '4:30 PM - 6:00 PM', 'sport': 'Baseball'},
-    ],
-    'Tuesday': [
-      {'time': '6:00 AM - 7:30 AM', 'sport': 'Women\'s Basketball'},
-      {'time': '7:30 AM - 9:00 AM', 'sport': 'Men\'s Lacrosse'},
-      {'time': '3:00 PM - 4:30 PM', 'sport': 'Women\'s Lacrosse'},
-      {'time': '4:30 PM - 6:00 PM', 'sport': 'Track & Field'},
-    ],
-    'Wednesday': [
-      {'time': '6:00 AM - 7:30 AM', 'sport': 'Football'},
-      {'time': '7:30 AM - 9:00 AM', 'sport': 'Men\'s Basketball'},
-      {'time': '3:00 PM - 4:30 PM', 'sport': 'Women\'s Soccer'},
-      {'time': '4:30 PM - 6:00 PM', 'sport': 'Baseball'},
-    ],
-    'Thursday': [
-      {'time': '6:00 AM - 7:30 AM', 'sport': 'Women\'s Basketball'},
-      {'time': '7:30 AM - 9:00 AM', 'sport': 'Men\'s Lacrosse'},
-      {'time': '3:00 PM - 4:30 PM', 'sport': 'Women\'s Lacrosse'},
-      {'time': '4:30 PM - 6:00 PM', 'sport': 'Track & Field'},
-    ],
-    'Friday': [
-      {'time': '6:00 AM - 7:30 AM', 'sport': 'Football'},
-      {'time': '7:30 AM - 9:00 AM', 'sport': 'Mixed Sports'},
-      {'time': '3:00 PM - 4:30 PM', 'sport': 'Open Lift'},
-    ],
-    'Saturday': [
-      {'time': '8:00 AM - 10:00 AM', 'sport': 'Open Lift'},
-      {'time': '10:00 AM - 12:00 PM', 'sport': 'Team Training'},
-    ],
-    'Sunday': [
-      {'time': '1:00 PM - 4:00 PM', 'sport': 'Open Lift'},
-    ],
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Varsity Lift Schedule'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF000399).withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Weight Room Schedule',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Varsity athletes can use the weight room during their team\'s designated times.',
-                  style: TextStyle(fontSize: 14, color: Colors.black87),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          ..._liftSchedule.entries.map((entry) {
-            final day = entry.key;
-            final slots = entry.value;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8, top: 12),
-                  child: Text(
-                    day.toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
-                      color: Color(0xFF000399),
-                    ),
-                  ),
-                ),
-                ...slots.map((slot) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.fitness_center,
-                          color: const Color(0xFF000399),
-                          size: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                slot['sport']!,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                slot['time']!,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ],
-            );
-          }),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────
 // CAMPUS MAP PAGE
 // ─────────────────────────────────────────────
 class CampusMapPage extends StatelessWidget {
@@ -3202,11 +2720,11 @@ class _ResultsPageState extends State<ResultsPage> with SingleTickerProviderStat
 
   static const List<String> _sports = [
     'All',
+    "Women's Basketball",
+    "Men's Basketball",
     'Baseball',
     "Men's Lacrosse",
     "Women's Lacrosse",
-    "Men's Tennis",
-    "Women's Tennis",
   ];
 
   @override
@@ -3242,14 +2760,6 @@ class _ResultsPageState extends State<ResultsPage> with SingleTickerProviderStat
           final results = sport == 'All'
               ? EventsData.getResults()
               : EventsData.getResults().where((e) => e.sport == sport).toList();
-
-          // Sort: reverse chronological for "All", chronological for individual sports
-          if (sport == 'All') {
-            results.sort((a, b) => b.dateTime.compareTo(a.dateTime)); // Newest first
-          } else {
-            results.sort((a, b) => a.dateTime.compareTo(b.dateTime)); // Oldest first
-          }
-
           return _buildResultsList(results);
         }).toList(),
       ),
@@ -3343,6 +2853,62 @@ class _MoreMenuPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // ── DARK Occupancy Banner ──
+          Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF000399), Color(0xFF0005CC)],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {},
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: Colors.white24,
+                        child: Icon(Icons.fitness_center, color: Colors.white),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'DARK Fitness Center',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'Occupancy',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.chevron_right, color: Colors.white54),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
           // ── EXPLORE ──
           const Padding(
             padding: EdgeInsets.only(bottom: 12),
@@ -3360,27 +2926,11 @@ class _MoreMenuPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _NavCard(
-            title: 'DARC Fitness Center Occupancy',
-            description: 'Real-time occupancy levels for Duchossois Fitness Center throughout the day.',
-            icon: Icons.bar_chart,
-            color: const Color(0xFF6A1B9A),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DarcOccupancyPage())),
-          ),
-          const SizedBox(height: 12),
-          _NavCard(
             title: 'Campus Map',
             description: 'Interactive map of W&L — find sporting facilities, fields & venues.',
             icon: Icons.map,
             color: const Color(0xFF1B5E20),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CampusMapPage())),
-          ),
-          const SizedBox(height: 12),
-          _NavCard(
-            title: 'Varsity Lift Schedule',
-            description: 'Weight room and strength training schedule for varsity athletes.',
-            icon: Icons.fitness_center,
-            color: const Color(0xFF000399),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VarsityLiftSchedulePage())),
           ),
           // ── SPORTS ──
           const Padding(
