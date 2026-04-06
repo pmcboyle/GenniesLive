@@ -4,6 +4,7 @@ import 'package:web/web.dart' as web;
 import 'dart:ui_web' as ui_web;
 import 'models/sporting_event.dart';
 import 'data/events_data.dart';
+import 'data/roster_data.dart';
 
 void main() {
   ui_web.platformViewRegistry.registerViewFactory(
@@ -339,58 +340,58 @@ class _NewsItem {
 
 const List<_NewsItem> _newsItems = [
   _NewsItem(
-    headline: 'Records Aplenty as No. 8 W&L Finishes Strong at Stith Invitational',
-    sport: "Women's Golf",
-    sportTag: 'WGOLF',
-    timeAgo: 'Yesterday',
+    headline: 'Gartley Breaks 38-Year-Old Record on Final Day of Colonial Relays',
+    sport: "Men's Track & Field",
+    sportTag: 'MTF',
+    timeAgo: '2 days ago',
     asset: 'assets/images/generals_logo.png',
-    tagColor: Color(0xFF2E7D32),
-    url: 'https://generalssports.com/news/2026/3/31/womens-golf-records-aplenty-as-no-8-w-l-finishes-strong-at-stith-invitational.aspx',
+    tagColor: Color(0xFF4A148C),
+    url: 'https://generalssports.com/news/2026/4/4/mens-track-and-field-gartley-breaks-38-year-old-record-on-final-day-of-colonial-relays.aspx',
   ),
   _NewsItem(
-    headline: 'Six-Run Fifth Inning Leads Baseball Past Wilson College',
+    headline: 'Late Innings Production Powers Baseball to Doubleheader Split at Roanoke',
     sport: 'Baseball',
     sportTag: 'BASE',
     timeAgo: '2 days ago',
     asset: 'assets/images/baseball.webp',
     tagColor: Color(0xFF1B5E20),
-    url: 'https://generalssports.com/news/2026/3/30/six-run-fifth-inning-leads-baseball-past-wilson-college.aspx',
+    url: 'https://generalssports.com/news/2026/4/4/late-innings-production-powers-baseball-to-doubleheader-split-at-roanoke.aspx',
   ),
   _NewsItem(
-    headline: "Women's Track & Field Records Four Top-Ten Updates at Doc Jopson Invite",
-    sport: "Women's Track & Field",
-    sportTag: 'WTF',
-    timeAgo: '3 days ago',
+    headline: 'Lorenz Breaks 100 Wins, No. 12 W&L Celebrates Seniors in Sweep of Hollins',
+    sport: "Women's Tennis",
+    sportTag: 'WTEN',
+    timeAgo: '2 days ago',
     asset: 'assets/images/generals_logo.png',
-    tagColor: Color(0xFF6A1B9A),
-    url: 'https://generalssports.com/news/2026/3/28/womens-track-and-field-womens-track-field-records-four-top-ten-updates-at-doc-jopson-invite.aspx',
+    tagColor: Color(0xFF880E4F),
+    url: 'https://generalssports.com/news/2026/4/4/womens-tennis-lorenz-breaks-100-wins-no-12-w-l-celebrates-seniors-in-sweep-of-hollins.aspx',
   ),
   _NewsItem(
-    headline: "No. 17 W&L's ODAC Winning Streak Snapped at Randolph-Macon",
-    sport: "Men's Lacrosse",
-    sportTag: 'MLAX',
-    timeAgo: '4 days ago',
-    asset: 'assets/images/mens_lacrosse.webp',
-    tagColor: Color(0xFF283593),
-    url: 'https://generalssports.com/news/2026/3/28/mens-lacrosse-no-17-w-ls-odac-winning-streak-snapped-at-randolph-macon.aspx',
-  ),
-  _NewsItem(
-    headline: "No. 36 Men's Tennis Claims Match at Averett in Top-2 ODAC Battle",
+    headline: 'No. 45 Generals Cruise Past Hampden-Sydney on the Road',
     sport: "Men's Tennis",
     sportTag: 'MTEN',
-    timeAgo: '4 days ago',
+    timeAgo: '2 days ago',
     asset: 'assets/images/generals_logo.png',
     tagColor: Color(0xFF01579B),
-    url: 'https://generalssports.com/news/2026/3/28/no-36-mens-tennis-claims-match-at-averett-in-top-2-odac-battle.aspx',
+    url: 'https://generalssports.com/news/2026/4/4/mens-tennis-no-45-generals-cruise-past-hampden-sydney-on-the-road.aspx',
   ),
   _NewsItem(
-    headline: "No. 3 Women's Basketball Erases Eight-Point Deficit to Down No. 23 Bethel in NCAA Round of 16",
-    sport: "Women's Basketball",
-    sportTag: 'WBB',
-    timeAgo: '2 weeks ago',
-    asset: 'assets/images/wbb_allregion.png',
-    tagColor: Color(0xFF000399),
-    url: 'https://generalssports.com/news/2026/3/14/womens-basketball-no-3-womens-basketball-erases-eight-point-halftime-deficit-to-down-no-23-bethel-minn-in-ncaa-round-of-16.aspx',
+    headline: 'Big First Half Keys No. 19 W&L to Pivotal Win Over H-SC',
+    sport: "Men's Lacrosse",
+    sportTag: 'MLAX',
+    timeAgo: '2 days ago',
+    asset: 'assets/images/mens_lacrosse.webp',
+    tagColor: Color(0xFF283593),
+    url: 'https://generalssports.com/news/2026/4/4/mens-lacrosse-big-first-half-keys-no-19-w-l-to-pivotal-win-over-h-sc.aspx',
+  ),
+  _NewsItem(
+    headline: 'Four Hat Tricks Power No. 6 Women\'s Lacrosse Past Roanoke, 15-5',
+    sport: "Women's Lacrosse",
+    sportTag: 'WLAX',
+    timeAgo: '4 days ago',
+    asset: 'assets/images/womens_lacrosse.png',
+    tagColor: Color(0xFF1565C0),
+    url: 'https://generalssports.com/news/2026/4/2/four-hat-tricks-power-no-6-womens-lacrosse-past-roanoke-15-5.aspx',
   ),
 ];
 
@@ -402,7 +403,7 @@ class _HeroNewsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => launchUrl(
-        Uri.parse('https://generalssports.com/news/2026/3/28/no-6-womens-lacrosse-celebrates-senior-day-with-win-over-virginia-wesleyan.aspx'),
+        Uri.parse('https://generalssports.com/news/2026/4/4/womens-lacrosse-no-6-washington-and-lee-cruises-past-bridgewater-19-3.aspx'),
         mode: LaunchMode.externalApplication,
         webOnlyWindowName: '_blank',
       ),
@@ -449,7 +450,7 @@ class _HeroNewsCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Text(
-                      'SENIOR DAY',
+                      'ODAC WIN',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 9,
@@ -460,7 +461,7 @@ class _HeroNewsCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'WIN 25-2',
+                    'WIN 19-3',
                     style: TextStyle(
                       color: Color(0xFF6699FF),
                       fontSize: 32,
@@ -501,7 +502,7 @@ class _HeroNewsCaption extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'No. 6 Women\'s Lacrosse Celebrates Senior Day with Win Over Virginia Wesleyan',
+            'No. 6 Washington and Lee Cruises Past Bridgewater, 19-3',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w900,
@@ -515,7 +516,7 @@ class _HeroNewsCaption extends StatelessWidget {
               const Icon(Icons.sports_hockey, size: 13, color: Colors.grey),
               const SizedBox(width: 4),
               Text(
-                'WLAX  •  4 days ago',
+                'WLAX  •  2 days ago',
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ],
@@ -2371,18 +2372,11 @@ class ClubSportsPage extends StatelessWidget {
   const ClubSportsPage({super.key, this.showBackButton = true});
 
   static const List<Map<String, String>> _clubs = [
-    {'name': 'Ultimate Frisbee', 'season': 'Fall & Spring', 'contact': 'ultimate@wlu.edu', 'icon': 'frisbee'},
-    {'name': 'Rugby', 'season': 'Fall & Spring', 'contact': 'rugby@wlu.edu', 'icon': 'rugby'},
+    {'name': 'Club Rugby', 'season': 'Fall & Spring', 'contact': 'rugby@wlu.edu', 'icon': 'rugby'},
     {'name': 'Club Soccer', 'season': 'Fall & Spring', 'contact': 'clubsoccer@wlu.edu', 'icon': 'soccer'},
-    {'name': 'Crew / Rowing', 'season': 'Fall & Spring', 'contact': 'crew@wlu.edu', 'icon': 'rowing'},
-    {'name': 'Volleyball', 'season': 'Fall & Spring', 'contact': 'volleyball@wlu.edu', 'icon': 'volleyball'},
-    {'name': 'Cycling', 'season': 'Spring', 'contact': 'cycling@wlu.edu', 'icon': 'cycling'},
-    {'name': 'Rock Climbing', 'season': 'Year-Round', 'contact': 'climbing@wlu.edu', 'icon': 'climbing'},
-    {'name': 'Equestrian', 'season': 'Fall & Spring', 'contact': 'equestrian@wlu.edu', 'icon': 'equestrian'},
+    {'name': 'Club Swimming', 'season': 'Fall & Spring', 'contact': 'clubswimming@wlu.edu', 'icon': 'swimming'},
+    {'name': 'Intramural Basketball', 'season': 'Fall & Spring', 'contact': 'imbasketball@wlu.edu', 'icon': 'basketball'},
     {'name': 'Skiing / Snowboarding', 'season': 'Winter', 'contact': 'skiing@wlu.edu', 'icon': 'skiing'},
-    {'name': 'Tennis', 'season': 'Spring', 'contact': 'clubtennis@wlu.edu', 'icon': 'tennis'},
-    {'name': 'Golf', 'season': 'Fall & Spring', 'contact': 'clubgolf@wlu.edu', 'icon': 'golf'},
-    {'name': 'Pickleball', 'season': 'Year-Round', 'contact': 'pickleball@wlu.edu', 'icon': 'pickleball'},
   ];
 
   @override
@@ -2720,11 +2714,11 @@ class _ResultsPageState extends State<ResultsPage> with SingleTickerProviderStat
 
   static const List<String> _sports = [
     'All',
-    "Women's Basketball",
-    "Men's Basketball",
     'Baseball',
     "Men's Lacrosse",
     "Women's Lacrosse",
+    "Men's Tennis",
+    "Women's Tennis",
   ];
 
   @override
@@ -2760,8 +2754,257 @@ class _ResultsPageState extends State<ResultsPage> with SingleTickerProviderStat
           final results = sport == 'All'
               ? EventsData.getResults()
               : EventsData.getResults().where((e) => e.sport == sport).toList();
-          return _buildResultsList(results);
+          results.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+          if (sport == 'All') {
+            return _buildResultsList(results);
+          }
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _showRoster(context, sport),
+                    icon: const Icon(Icons.people_outline, size: 18),
+                    label: const Text('View Roster'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF000399),
+                      side: const BorderSide(color: Color(0xFF000399)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(child: _buildResultsList(results)),
+            ],
+          );
         }).toList(),
+      ),
+    );
+  }
+
+  void _showRoster(BuildContext context, String sport) {
+    final players = RosterData.getRoster(sport);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.75,
+        maxChildSize: 0.95,
+        minChildSize: 0.4,
+        builder: (_, controller) => Column(
+          children: [
+            const SizedBox(height: 8),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 12),
+            Text(sport, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF000399))),
+            Text('${players.length} Players', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            const SizedBox(height: 8),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView.separated(
+                controller: controller,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: players.length,
+                separatorBuilder: (_, __) => const Divider(height: 1, indent: 16, endIndent: 16),
+                itemBuilder: (_, i) {
+                  final p = players[i];
+                  Widget avatar;
+                  if (p.photoUrl != null && p.photoUrl!.isNotEmpty) {
+                    avatar = CircleAvatar(
+                      radius: 24,
+                      backgroundColor: const Color(0xFF000399),
+                      backgroundImage: NetworkImage(p.photoUrl!),
+                      onBackgroundImageError: (_, __) {},
+                      child: null,
+                    );
+                  } else {
+                    avatar = CircleAvatar(
+                      radius: 24,
+                      backgroundColor: const Color(0xFF000399),
+                      child: Text(
+                        p.number ?? '—',
+                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    );
+                  }
+                  return ListTile(
+                    leading: avatar,
+                    title: GestureDetector(
+                      onTap: () => _showPlayerDetail(context, p),
+                      child: Text(
+                        p.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Color(0xFF000399),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                    subtitle: Text(
+                      [if (p.position != null) p.position!, p.year, p.hometown].join(' · '),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
+                    onTap: () => _showPlayerDetail(context, p),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPlayerDetail(BuildContext context, RosterPlayer p) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header with photo
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                child: Stack(
+                  children: [
+                    if (p.photoUrl != null && p.photoUrl!.isNotEmpty)
+                      Image.network(
+                        p.photoUrl!,
+                        width: double.infinity,
+                        height: 220,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          width: double.infinity,
+                          height: 220,
+                          color: const Color(0xFF000399),
+                          child: const Icon(Icons.person, size: 80, color: Colors.white54),
+                        ),
+                      )
+                    else
+                      Container(
+                        width: double.infinity,
+                        height: 220,
+                        color: const Color(0xFF000399),
+                        child: const Icon(Icons.person, size: 80, color: Colors.white54),
+                      ),
+                    // Number badge
+                    if (p.number != null)
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '#${p.number}',
+                            style: const TextStyle(
+                              color: Color(0xFF000399),
+                              fontWeight: FontWeight.w900,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(p.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF000399))),
+                    if (p.position != null) ...[
+                      const SizedBox(height: 2),
+                      Text(p.position!, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                    ],
+                    const SizedBox(height: 16),
+                    const Divider(height: 1),
+                    const SizedBox(height: 16),
+                    _playerDetailRow(Icons.school, 'Year', p.year),
+                    _playerDetailRow(Icons.home_outlined, 'Hometown', p.hometown),
+                    if (p.highSchool != null) _playerDetailRow(Icons.account_balance, 'High School', p.highSchool!),
+                    if (p.major != null) _playerDetailRow(Icons.menu_book, 'Major', p.major!),
+                    if (p.height != null) _playerDetailRow(Icons.height, 'Height', p.height!),
+                    if (p.weight != null) _playerDetailRow(Icons.monitor_weight_outlined, 'Weight', p.weight!),
+                    if (p.handedness != null) _playerDetailRow(Icons.sports_baseball, 'B/T', p.handedness!),
+                    if (p.clubTeam != null) _playerDetailRow(Icons.group, 'Club Team', p.clubTeam!),
+                    if (p.stats != null && p.stats!.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      const Divider(height: 1),
+                      const SizedBox(height: 12),
+                      const Text('2025–26 Stats', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF000399))),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: p.stats!.entries.map((e) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF000399).withOpacity(0.06),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: const Color(0xFF000399).withOpacity(0.15)),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(e.value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF000399))),
+                                Text(e.key, style: TextStyle(fontSize: 10, color: Colors.grey[600], fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('Close'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _playerDetailRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: const Color(0xFF000399)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[500], fontWeight: FontWeight.w600)),
+                Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
