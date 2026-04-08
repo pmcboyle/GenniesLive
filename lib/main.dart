@@ -2172,7 +2172,7 @@ class _DuchossoisHoursCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: ExpansionTile(
+      child: ListTile(
         leading: const CircleAvatar(
           backgroundColor: Color(0xFF000399),
           child: Icon(Icons.access_time, color: Colors.white),
@@ -2184,29 +2184,6 @@ class _DuchossoisHoursCard extends StatelessWidget {
         subtitle: const Text(
           'Mon–Fri: 6:00 AM – 11:00 PM\nSat–Sun: 8:00 AM – 10:00 PM',
         ),
-        trailing: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'click for\nbusy hours',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 9,
-                color: Color(0xFF000399),
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            Icon(Icons.expand_more, size: 18, color: Colors.grey),
-          ],
-        ),
-        children: const [
-          Divider(height: 1),
-          Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: _BusyHoursCard(),
-          ),
-        ],
       ),
     );
   }
@@ -3250,7 +3227,7 @@ class _MoreMenuPage extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 borderRadius: BorderRadius.circular(12),
-                onTap: () {},
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const _DARKFitnessCenterPage())),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                   child: Row(
@@ -3338,6 +3315,34 @@ class _MoreMenuPage extends StatelessWidget {
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ClubSportsPage())),
           ),
           const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// DARK FITNESS CENTER PAGE
+// ─────────────────────────────────────────────
+class _DARKFitnessCenterPage extends StatelessWidget {
+  const _DARKFitnessCenterPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'DARK Fitness Center',
+          style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFF000399),
+        foregroundColor: Colors.white,
+      ),
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: const ListView(
+        padding: EdgeInsets.all(16),
+        children: [
+          _BusyHoursCard(),
         ],
       ),
     );
