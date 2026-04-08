@@ -1,3 +1,4 @@
+import 'dart:js_interop';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web/web.dart' as web;
@@ -139,38 +140,41 @@ class HomePage extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.only(bottom: 50),
               centerTitle: true,
-              title: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.network(
-                    'https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/generalssports.com/images/logos/site/site.png',
-                    height: 36,
-                    color: Colors.white,
-                    colorBlendMode: BlendMode.srcIn,
-                    errorBuilder: (context, error, stack) => const SizedBox.shrink(),
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'GENNIE LIVE',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
+              title: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.network(
+                      'https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/generalssports.com/images/logos/site/site.png',
+                      height: 36,
                       color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 2,
+                      colorBlendMode: BlendMode.srcIn,
+                      errorBuilder: (context, error, stack) => const SizedBox.shrink(),
                     ),
-                  ),
-                  const Text(
-                    'Washington & Lee University Athletics',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
+                    const SizedBox(height: 6),
+                    const Text(
+                      'GENNIE LIVE',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                      ),
                     ),
-                  ),
-                ],
+                    const Text(
+                      'Washington & Lee University Athletics',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               background: Container(
                 decoration: const BoxDecoration(
@@ -218,6 +222,9 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
+
+          // ── Game day notifications signup ──
+          const SliverToBoxAdapter(child: _EmailSignupSection()),
         ],
       ),
     );
@@ -396,6 +403,138 @@ const List<_NewsItem> _newsItems = [
 ];
 
 // ── Hero featured story ──
+class _EmailSignupSection extends StatefulWidget {
+  const _EmailSignupSection();
+
+  @override
+  State<_EmailSignupSection> createState() => _EmailSignupSectionState();
+}
+
+class _EmailSignupSectionState extends State<_EmailSignupSection> {
+  final _controller = TextEditingController();
+  bool _submitted = false;
+  String _error = '';
+
+  Future<void> _submit() async {
+    final email = _controller.text.trim();
+    final valid = RegExp(r'^[\w\.\+\-]+@[\w\-]+\.[a-z]{2,}$').hasMatch(email);
+    if (!valid) {
+      setState(() => _error = 'Please enter a valid email address.');
+      return;
+    }
+    // Submit silently to Google Form — responses saved to linked Google Sheet
+    final url =
+        'https://docs.google.com/forms/d/e/1FAIpQLSfktBG7XythS-ADb2qiIaxBnfIR8I1pcxdzQ3rdGG1Xe9jYVg/formResponse?entry.867871500=${Uri.encodeComponent(email)}';
+    try {
+      web.window.fetch(url.toJS);
+    } catch (_) {}
+    setState(() {
+      _submitted = true;
+      _error = '';
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF000399),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: _submitted
+          ? const Column(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white, size: 36),
+                SizedBox(height: 10),
+                Text(
+                  "You're signed up!",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 6),
+                Text(
+                  "We'll notify you on game days.",
+                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.notifications_active, color: Colors.white, size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      'GAME DAY NOTIFICATIONS',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Get notified when the Generals play.',
+                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: _controller,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Enter your email',
+                    hintStyle: const TextStyle(color: Colors.white54),
+                    filled: true,
+                    fillColor: Colors.white12,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                    errorText: _error.isEmpty ? null : _error,
+                    errorStyle: const TextStyle(color: Colors.orangeAccent),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF000399),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Sign Up',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
 class _HeroNewsCard extends StatelessWidget {
   const _HeroNewsCard();
 
