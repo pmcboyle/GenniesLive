@@ -3308,6 +3308,14 @@ class _MoreMenuPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _NavCard(
+            title: 'Team Rosters',
+            description: 'Browse the full roster for every Generals varsity sports team.',
+            icon: Icons.people,
+            color: const Color(0xFF1565C0),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const _TeamRostersPage())),
+          ),
+          const SizedBox(height: 12),
+          _NavCard(
             title: 'Club Sports',
             description: 'Browse and sign up for student-run club sports at Washington & Lee.',
             icon: Icons.groups,
@@ -3339,10 +3347,238 @@ class _DARKFitnessCenterPage extends StatelessWidget {
         foregroundColor: Colors.white,
       ),
       backgroundColor: const Color(0xFFF5F5F5),
-      body: const ListView(
-        padding: EdgeInsets.all(16),
-        children: [
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: const [
           _BusyHoursCard(),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// TEAM ROSTERS PAGE
+// ─────────────────────────────────────────────
+class _TeamRostersPage extends StatelessWidget {
+  const _TeamRostersPage();
+
+  @override
+  Widget build(BuildContext context) {
+    final sports = EventsData.getAllSports();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Team Rosters',
+          style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFF000399),
+        foregroundColor: Colors.white,
+      ),
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: sports.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 10),
+        itemBuilder: (context, i) {
+          final sport = sports[i];
+          final count = RosterData.getRoster(sport).length;
+          return Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: const Color(0xFF000399),
+                child: Icon(_sportIcon(sport), color: Colors.white, size: 20),
+              ),
+              title: Text(sport, style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(count > 0 ? '$count players' : 'Roster coming soon'),
+              trailing: const Icon(Icons.chevron_right, color: Color(0xFF000399)),
+              onTap: count > 0 ? () => _showRoster(context, sport) : null,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showRoster(BuildContext context, String sport) {
+    final players = RosterData.getRoster(sport);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.75,
+        maxChildSize: 0.95,
+        minChildSize: 0.4,
+        builder: (_, controller) => Column(
+          children: [
+            const SizedBox(height: 8),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 12),
+            Text(sport, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF000399))),
+            Text('${players.length} Players', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            const SizedBox(height: 8),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView.separated(
+                controller: controller,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: players.length,
+                separatorBuilder: (_, __) => const Divider(height: 1, indent: 16, endIndent: 16),
+                itemBuilder: (_, i) {
+                  final p = players[i];
+                  final avatar = (p.photoUrl != null && p.photoUrl!.isNotEmpty)
+                      ? CircleAvatar(
+                          radius: 24,
+                          backgroundColor: const Color(0xFF000399),
+                          backgroundImage: NetworkImage(p.photoUrl!),
+                          onBackgroundImageError: (_, __) {},
+                        )
+                      : CircleAvatar(
+                          radius: 24,
+                          backgroundColor: const Color(0xFF000399),
+                          child: Text(p.number ?? '—', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                        );
+                  return ListTile(
+                    leading: avatar,
+                    title: GestureDetector(
+                      onTap: () => _showPlayerDetail(context, p),
+                      child: Text(
+                        p.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF000399), decoration: TextDecoration.underline),
+                      ),
+                    ),
+                    subtitle: Text(
+                      [if (p.position != null) p.position!, p.year, p.hometown].join(' · '),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
+                    onTap: () => _showPlayerDetail(context, p),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPlayerDetail(BuildContext context, RosterPlayer p) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                child: Stack(
+                  children: [
+                    if (p.photoUrl != null && p.photoUrl!.isNotEmpty)
+                      Image.network(
+                        p.photoUrl!,
+                        width: double.infinity,
+                        height: 220,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(width: double.infinity, height: 220, color: const Color(0xFF000399), child: const Icon(Icons.person, size: 80, color: Colors.white54)),
+                      )
+                    else
+                      Container(width: double.infinity, height: 220, color: const Color(0xFF000399), child: const Icon(Icons.person, size: 80, color: Colors.white54)),
+                    if (p.number != null)
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(color: Colors.white.withOpacity(0.9), borderRadius: BorderRadius.circular(20)),
+                          child: Text('#${p.number}', style: const TextStyle(color: Color(0xFF000399), fontWeight: FontWeight.w900, fontSize: 16)),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(p.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF000399))),
+                    if (p.position != null) ...[
+                      const SizedBox(height: 2),
+                      Text(p.position!, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                    ],
+                    const SizedBox(height: 16),
+                    const Divider(height: 1),
+                    const SizedBox(height: 16),
+                    _playerDetailRow(Icons.school, 'Year', p.year),
+                    _playerDetailRow(Icons.home_outlined, 'Hometown', p.hometown),
+                    if (p.highSchool != null) _playerDetailRow(Icons.account_balance, 'High School', p.highSchool!),
+                    if (p.major != null) _playerDetailRow(Icons.menu_book, 'Major', p.major!),
+                    if (p.height != null) _playerDetailRow(Icons.height, 'Height', p.height!),
+                    if (p.weight != null) _playerDetailRow(Icons.monitor_weight_outlined, 'Weight', p.weight!),
+                    if (p.handedness != null) _playerDetailRow(Icons.sports_baseball, 'B/T', p.handedness!),
+                    if (p.clubTeam != null) _playerDetailRow(Icons.group, 'Club Team', p.clubTeam!),
+                    if (p.stats != null && p.stats!.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      const Divider(height: 1),
+                      const SizedBox(height: 12),
+                      const Text('2025–26 Stats', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF000399))),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: p.stats!.entries.map((e) => Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(color: const Color(0xFFE8EAF6), borderRadius: BorderRadius.circular(8)),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(e.value, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Color(0xFF000399))),
+                              Text(e.key, style: TextStyle(fontSize: 10, color: Colors.grey[600])),
+                            ],
+                          ),
+                        )).toList(),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _playerDetailRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: const Color(0xFF000399)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[500], fontWeight: FontWeight.w600)),
+                Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+              ],
+            ),
+          ),
         ],
       ),
     );
