@@ -417,16 +417,21 @@ class _EmailSignupSectionState extends State<_EmailSignupSection> {
 
   Future<void> _submit() async {
     final email = _controller.text.trim();
-    final valid = RegExp(r'^[\w\.\+\-]+@[\w\-]+\.[a-z]{2,}$').hasMatch(email);
+    final valid = RegExp(r'^[\w\.\+\-]+@([\w\-]+\.)+[a-z]{2,}$', caseSensitive: false).hasMatch(email);
     if (!valid) {
       setState(() => _error = 'Please enter a valid email address.');
       return;
     }
-    // Submit silently to Google Form — responses saved to linked Google Sheet
-    final url =
-        'https://docs.google.com/forms/d/e/1FAIpQLSfktBG7XythS-ADb2qiIaxBnfIR8I1pcxdzQ3rdGG1Xe9jYVg/formResponse?entry.867871500=${Uri.encodeComponent(email)}';
+    // Submit via hidden iframe — bypasses CORS redirect restrictions
     try {
-      web.window.fetch(url.toJS);
+      final url =
+          'https://script.google.com/macros/s/AKfycbx1QoHGKbZn5DpoH_fnNVh8RmTpGW24lAs6ehcmkwdV2BUIRPOmbfQp0bg3l6pUsn1b/exec?email=${Uri.encodeComponent(email)}';
+      final iframe = web.HTMLIFrameElement();
+      iframe.src = url;
+      iframe.style.display = 'none';
+      web.document.body!.appendChild(iframe);
+      await Future.delayed(const Duration(seconds: 3));
+      iframe.remove();
     } catch (_) {}
     setState(() {
       _submitted = true;
